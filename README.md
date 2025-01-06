@@ -18,7 +18,7 @@ These projects will be automatically added into [https://projects.ce.pdn.ac.lk](
 
 ```
 {
-  "title": "This is the title of the project",
+  "title": "Smart Cart",
   "team": [
     {
       "name": "Team Member Name 1",
@@ -34,6 +34,11 @@ These projects will be automatically added into [https://projects.ce.pdn.ac.lk](
       "name": "Team Member Name 3",
       "email": "email@eng.pdn.ac.lk",
       "eNumber": "E/yy/xxx"
+    },
+    {
+      "name": "K.S.Dhananji",
+      "email": "e20062@@eng.pdn.ac.lk",
+      "eNumber": "E/20/062"
     }
   ],
   "supervisors": [
