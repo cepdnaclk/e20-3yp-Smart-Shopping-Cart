@@ -4,7 +4,7 @@ ___
 
 # eYY-3yp-project-template
 
-This is a sample repository you can use for your Embedded Systems project. Once you followed these instructions, remove the text and add a brief introduction to here.
+A smart shopping cart that enhances the retail experience through real-time item tracking and personalized shopping assistance.
 
 ### Enable GitHub Pages
 
@@ -21,19 +21,19 @@ These projects will be automatically added into [https://projects.ce.pdn.ac.lk](
   "title": "Smart Cart",
   "team": [
     {
-      "name": "Team Member Name 1",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
+      "name": "P.D.Thilakasiri",
+      "email": "e20397@eng.pdn.ac.lk",
+      "eNumber": "E/20/397"
     },
     {
-      "name": "Team Member Name 2",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
+      "name": "K.C.H.N.A.W.M.R.C.J.N.Bandara",
+      "email": "e20035@eng.pdn.ac.lk",
+      "eNumber": "E/20/035"
     },
     {
-      "name": "Team Member Name 3",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
+      "name": "R.A.D.J.I.Ranawaka",
+      "email": "e20318@eng.pdn.ac.lk",
+      "eNumber": "E/20/318"
     },
     {
       "name": "K.S.Dhananji",
@@ -43,15 +43,12 @@ These projects will be automatically added into [https://projects.ce.pdn.ac.lk](
   ],
   "supervisors": [
     {
-      "name": "Dr. Supervisor 1",
-      "email": "email@eng.pdn.ac.lk"
-    },
-    {
-      "name": "Supervisor 2",
-      "email": "email@eng.pdn.ac.lk"
+      "name": "Dr. Isuru Nawinne",
+      "email": "isurunawinne@eng.pdn.ac.lk"
     }
+   
   ],
-  "tags": ["Web", "Embedded Systems"]
+  "tags": ["Web", "Embedded Systems","IOT"]
 }
 ```
 
