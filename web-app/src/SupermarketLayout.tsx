@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Stage, Layer, Rect, Circle } from "react-konva";
+import { Stage, Layer, Rect, Circle, Line } from "react-konva";
 import Toolbar from "./Toolbar";
 import Sidebar from "./Sidebar";
 
@@ -11,6 +11,7 @@ interface Shape {
   width?: number;
   height?: number;
   radius?: number;
+  points?: number[];
   fill: string;
   name: string;
   scaleX: number;
@@ -27,22 +28,54 @@ const SupermarketLayout: React.FC = () => {
 
   // Add new shape
   const addShape = (type: "rect" | "circle") => {
-    const newShape: Shape = {
-      id: items.length + 1,
-      type,
-      x: 50 + items.length * 10,
-      y: 50 + items.length * 10,
-      width: type === "rect" ? 100 : undefined,
-      height: type === "rect" ? 50 : undefined,
-      radius: type === "circle" ? 30 : undefined,
-      fill: type === "rect" ? "lightblue" : "lightgreen",
-      name: `Shape ${items.length + 1}`, // Default name
-      scaleX: 1,  // Default scale
-      scaleY: 1,  // Default scale
-      rotation: 0,  // Default rotation
-    };
+    let newShape: Shape;
+  
+    if (type === "rect") {
+      newShape = {
+        id: items.length + 1,
+        type,
+        x: 50 + items.length * 10,
+        y: 50 + items.length * 10,
+        width: 100,
+        height: 50,
+        fill: "lightblue",
+        name: `Shape ${items.length + 1}`,
+        scaleX: 1,
+        scaleY: 1,
+        rotation: 0,
+      };
+    } else {
+      // Initial points (triangle-like shape for testing)
+      let points = [0, 0, 60, 200, 200, 0];
+  
+      // Compute centroid
+      let sumX = 0, sumY = 0, pointCount = points.length / 2;
+      for (let i = 0; i < points.length; i += 2) {
+        sumX += points[i];
+        sumY += points[i + 1];
+      }
+      const centerX = sumX / pointCount;
+      const centerY = sumY / pointCount;
+  
+      // Adjust points relative to centroid
+      points = points.map((p, i) => p - (i % 2 === 0 ? centerX : centerY));
+  
+      newShape = {
+        id: items.length + 1,
+        type,
+        x: 200 + items.length * 10, // Place near the center
+        y: 200 + items.length * 10,
+        points, // Store adjusted points
+        fill: "lightgreen",
+        name: `Shape ${items.length + 1}`,
+        scaleX: 1,
+        scaleY: 1,
+        rotation: 0,
+      };
+    }
+  
     setItems([...items, newShape]);
-  };
+  };  
 
   // Handle drag move
   const handleDragMove = (e: any, id: number) => {
@@ -198,24 +231,94 @@ const SupermarketLayout: React.FC = () => {
                   offsetY={item.height! / 2}  // Set rotation center to the middle of the shape
                 />
               ) : (
-                <Circle
-                  key={item.id}
-                  id={item.id.toString()}
-                  x={item.x}
-                  y={item.y}
-                  radius={item.radius}
-                  fill={item.fill}
-                  draggable
-                  scaleX={item.scaleX}  // Apply scaleX
-                  scaleY={item.scaleY}  // Apply scaleY
-                  rotation={item.rotation}  // Apply rotation
-                  onClick={() => handleSelectShape(item.id)}
-                  onDragMove={(e) => handleDragMove(e, item.id)}
-                  stroke={selectedId === item.id ? "red" : "transparent"}  // Highlight border when selected
-                  strokeWidth={5}  // Border width
-                  offsetX={item.radius!}  // Set rotation center to the middle of the circle
-                  offsetY={item.radius!}  // Set rotation center to the middle of the circle
-                />
+                <>
+  {/* Render the Polygon */}
+  <Line
+    key={item.id}
+    id={item.id.toString()}
+    x={item.x}
+    y={item.y}
+    points={item.points || []}
+    fill={item.fill}
+    closed
+    draggable
+    scaleX={item.scaleX}
+    scaleY={item.scaleY}
+    rotation={item.rotation} // Ensure rotation is applied
+    stroke={selectedId === item.id ? "red" : "black"}
+    strokeWidth={selectedId === item.id ? 5 : 2}
+    onClick={() => handleSelectShape(item.id)}
+    onDragMove={(e) => handleDragMove(e, item.id)}
+  />
+
+  {/* Render nodes when the shape is selected */}
+  {selectedId === item.id &&
+    (() => {
+      const points = item.points || [];
+
+      // Step 1: Compute centroid of polygon
+      let sumX = 0, sumY = 0, pointCount = points.length / 2;
+      for (let j = 0; j < points.length; j += 2) {
+        sumX += points[j];
+        sumY += points[j + 1];
+      }
+      const centerX = sumX / pointCount;
+      const centerY = sumY / pointCount;
+
+      // Step 2: Convert rotation angle to radians
+      const angle = (item.rotation * Math.PI) / 180;
+
+      return points.map((_, i) =>
+        i % 2 === 0 ? (
+          (() => {
+            const originalX = points[i];
+            const originalY = points[i + 1];
+
+            // Step 3: Apply rotation around the centroid
+            const rotatedX =
+              centerX +
+              (originalX - centerX) * Math.cos(angle) -
+              (originalY - centerY) * Math.sin(angle);
+            const rotatedY =
+              centerY +
+              (originalX - centerX) * Math.sin(angle) +
+              (originalY - centerY) * Math.cos(angle);
+
+            return (
+              <Circle
+                key={`node-${i}`}
+                x={rotatedX + item.x} // Apply shape's x offset
+                y={rotatedY + item.y} // Apply shape's y offset
+                radius={5}
+                fill="blue"
+                draggable
+                onDragMove={(e) => {
+                  const newX = e.target.x() - item.x;
+                  const newY = e.target.y() - item.y;
+
+                  // Step 4: Reverse rotation to map new node position back to unrotated space
+                  const unrotatedX =
+                    centerX +
+                    (newX - centerX) * Math.cos(-angle) -
+                    (newY - centerY) * Math.sin(-angle);
+                  const unrotatedY =
+                    centerY +
+                    (newX - centerX) * Math.sin(-angle) +
+                    (newY - centerY) * Math.cos(-angle);
+
+                  const newPoints = [...points];
+                  newPoints[i] = unrotatedX;
+                  newPoints[i + 1] = unrotatedY;
+
+                  setItems(items.map(it => it.id === item.id ? { ...it, points: newPoints } : it));
+                }}
+              />
+            );
+          })()
+        ) : null
+      );
+    })()}
+</>
               )
             )}
           </Layer>
