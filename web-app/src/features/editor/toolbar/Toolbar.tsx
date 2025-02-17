@@ -2,13 +2,13 @@
 import React from "react";
 
 interface ToolbarProps {
-  onAddShape: (type: "rect" | "circle") => void;
+  onAddFixture: (type: "rect" | "circle") => void;
   onDelete: () => void;
   isDeleteDisabled: boolean;
   onToggleSidebar: () => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ onAddShape, onDelete, isDeleteDisabled, onToggleSidebar }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ onAddFixture, onDelete, isDeleteDisabled, onToggleSidebar }) => {
   return (
     <div
       style={{
@@ -23,8 +23,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onAddShape, onDelete, isDeleteDisable
         zIndex: 1000,
       }}
     >
-      <button onClick={() => onAddShape("rect")}>Add Rectangle</button>
-      <button onClick={() => onAddShape("circle")}>Add Circle</button>
+      <button onClick={() => onAddFixture("circle")}>Add Fixture</button>
       <button onClick={onDelete} disabled={isDeleteDisabled}>
         Delete Selected
       </button>

@@ -1,11 +1,11 @@
 // App.tsx
 import React from "react";
-import SupermarketLayout from "./SupermarketLayout";
+import LayoutEditor from "./features/editor/LayoutEditor";
 
 const App: React.FC = () => {
   return (
     <div>
-      <SupermarketLayout />
+      <LayoutEditor />
     </div>
   );
 };
