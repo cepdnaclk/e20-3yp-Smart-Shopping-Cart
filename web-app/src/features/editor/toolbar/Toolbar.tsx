@@ -1,14 +1,17 @@
 // Toolbar.tsx
 import React from "react";
+import { useEdgeContext } from "../../../hooks/useEdgeContext";
+import { useFixtureContext } from "../../../hooks/useFixtureContext";
 
 interface ToolbarProps {
-  onAddFixture: (type: "rect" | "circle") => void;
-  onDelete: () => void;
-  isDeleteDisabled: boolean;
   onToggleSidebar: () => void;
+  onToggleMode: () => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ onAddFixture, onDelete, isDeleteDisabled, onToggleSidebar }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ onToggleSidebar, onToggleMode }) => {
+  const { setSelectedEdge } = useEdgeContext();
+  const { selectedFixtureId, addFixture, deleteFixture } = useFixtureContext();
+
   return (
     <div
       style={{
@@ -23,11 +26,19 @@ const Toolbar: React.FC<ToolbarProps> = ({ onAddFixture, onDelete, isDeleteDisab
         zIndex: 1000,
       }}
     >
-      <button onClick={() => onAddFixture("circle")}>Add Fixture</button>
-      <button onClick={onDelete} disabled={isDeleteDisabled}>
+      <button onClick={() => addFixture()}>Add Fixture</button>
+      <button onClick={deleteFixture} disabled={selectedFixtureId === null}>
         Delete Selected
       </button>
       <button onClick={onToggleSidebar}>Toggle Sidebar</button>
+      <button
+        onClick={() => {
+          setSelectedEdge(null);
+          onToggleMode();
+        }}
+      >
+        Toggle Mode
+      </button>
     </div>
   );
 };

@@ -1,36 +1,47 @@
 import { SetStateAction } from "react";
 import Fixture from "../types/Fixture";
 
-const useNode = () => {
-    const handleNodeDragMove = (
-        e: any,
-        itemId: string,
-        nodeIndex: number,
-        setItems: React.Dispatch<SetStateAction<Record<string, Fixture>>>
-    ) => {
-        const { x, y } = e.target.position(); // Get absolute position in canvas
+const useNode = ({
+  selectedNode,
+  setSelectedNode,
+}: {
+  selectedNode: number | null;
+  setSelectedNode: React.Dispatch<SetStateAction<number | null>>;
+}) => {
+  const handleNodeDragMove = (
+    e: any,
+    itemId: string,
+    nodeIndex: number,
+    setItems: React.Dispatch<SetStateAction<Record<string, Fixture>>>
+  ) => {
+    const { x, y } = e.target.position();
 
-        setItems((prevItems) => {
-            const item = prevItems[itemId];
-            if (!item) return prevItems; // If item doesn't exist, return unchanged state
+    setItems((prevItems) => {
+      const item = prevItems[itemId];
+      if (!item) return prevItems;
 
-            // ✅ Fix: Adjust node position to be relative to the fixture (Group)
-            const relativeX = x - item.x;
-            const relativeY = y - item.y;
+      const relativeX = x - item.x;
+      const relativeY = y - item.y;
 
-            return {
-                ...prevItems,
-                [itemId]: {
-                    ...item,
-                    points: item.points.map((p, i) =>
-                        i === nodeIndex ? relativeX : i === nodeIndex + 1 ? relativeY : p
-                    ),
-                },
-            };
-        });
-    };
+      return {
+        ...prevItems,
+        [itemId]: {
+          ...item,
+          points: item.points.map((p, i) =>
+            i === nodeIndex ? relativeX : i === nodeIndex + 1 ? relativeY : p
+          ),
+        },
+      };
+    });
+  };
 
-    return { handleNodeDragMove };
+  const handleNodeDelete = () => {
+    if (selectedNode != null) {
+      setSelectedNode(null);
+    }
+  };
+
+  return { handleNodeDragMove, handleNodeDelete };
 };
 
 export default useNode;
