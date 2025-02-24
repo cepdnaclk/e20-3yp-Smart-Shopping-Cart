@@ -9,11 +9,12 @@ title: Smart Shopping Cart
 
 [comment]: # "This is the standard layout for the project, but you can clean this and use your own template"
 
-# Project Title
+# Smart Shopping Cart
 
 ---
 
 ## Team
+-  E/20/062, Dhananji K.S, [email](mailto:e20062@eng.pdn.ac.lk)
 -  eNumber, Name, [email](mailto:name@email.com)
 -  eNumber, Name, [email](mailto:name@email.com)
 -  eNumber, Name, [email](mailto:name@email.com)
