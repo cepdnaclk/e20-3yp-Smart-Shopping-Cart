@@ -15,9 +15,9 @@ title: Smart Shopping Cart
 
 ## Team
 -  E/20/062, Dhananji K.S, [email](mailto:e20062@eng.pdn.ac.lk)
--  eNumber, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
+-  E/20/035, K.C.H.N.A.W.M.R.C.J.N.Bandara, [email](mailto:e20035@eng.pdn.ac.lk)
+-  E/20/318, R.A.D.J.I.Ranawaka, [email](mailto:e20318@eng.pdn.ac.lk)
+-  E/20/397, P.D.Thilakasiri, [email](mailto:e20397@eng.pdn.ac.lk)
 
 <!-- Image (photo/drawing of the final hardware) should be here -->
 
