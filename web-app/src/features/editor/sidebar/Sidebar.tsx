@@ -1,24 +1,25 @@
 import React from "react";
+import { useEdgeContext } from "../../../hooks/useEdgeContext";
+import { useFixtureContext } from "../../../hooks/useFixtureContext";
+import { useNodeContext } from "../../../hooks/useNodeContext";
 
 interface SidebarProps {
   position: { x: number; y: number };
   name: string;
-  onPositionChange: (axis: "x" | "y", value: number) => void;
-  onNameChange: (name: string) => void;
-  onDelete: () => void;
-  isDeleteDisabled: boolean;
   onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
-  position,
-  name,
-  onPositionChange,
-  onNameChange,
-  onDelete,
-  isDeleteDisabled,
-  onClose
-}) => {
+const Sidebar: React.FC<SidebarProps> = ({ position, name, onClose }) => {
+  const { selectedNode, deleteNode } = useNodeContext();
+  const { selectedEdge, handleAddNodeToEdge } = useEdgeContext();
+  const {
+    selectedFixtureId,
+    setFixtures,
+    handleFixtureNameChange,
+    handleFixturePositionChange,
+    deleteFixture,
+  } = useFixtureContext();
+
   return (
     <div
       style={{
@@ -40,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <input
         type="text"
         value={name}
-        onChange={(e) => onNameChange(e.target.value)}
+        onChange={(e) => handleFixtureNameChange(e.target.value)}
         style={{ width: "100%" }}
       />
       <br />
@@ -48,18 +49,43 @@ const Sidebar: React.FC<SidebarProps> = ({
       <input
         type="number"
         value={position.x}
-        onChange={(e) => onPositionChange("x", parseFloat(e.target.value))}
+        onChange={(e) =>
+          handleFixturePositionChange("x", parseFloat(e.target.value))
+        }
       />
       <br />
       <label>Y Position:</label>
       <input
         type="number"
         value={position.y}
-        onChange={(e) => onPositionChange("y", parseFloat(e.target.value))}
+        onChange={(e) =>
+          handleFixturePositionChange("y", parseFloat(e.target.value))
+        }
       />
       <br />
-      <button onClick={onDelete} disabled={isDeleteDisabled}>
+      <button onClick={deleteFixture} disabled={selectedFixtureId === null}>
         Delete Shape
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          if (selectedEdge !== null) {
+            handleAddNodeToEdge(selectedEdge);
+          }
+        }}
+        disabled={selectedEdge === null}
+      >
+        Add Node to Edge
+      </button>
+      <button
+        onClick={() => {
+          if (selectedNode !== null && selectedFixtureId != null) {
+            deleteNode(selectedFixtureId, setFixtures);
+          }
+        }}
+        disabled={selectedNode === null || selectedFixtureId === null}
+      >
+        Delete Node
       </button>
     </div>
   );
