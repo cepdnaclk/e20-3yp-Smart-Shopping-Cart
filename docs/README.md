@@ -60,6 +60,11 @@ Navigating large stores to find items is time-consuming and inefficient.
 
 ## Proposed Solution
 
+Web App for Shop Owners
+Smart Cart Module
+User Side Features
+Enhanced Checkout Process
+
 ## Hardware and Software Designs
 
 Detailed designs with many sub-sections
