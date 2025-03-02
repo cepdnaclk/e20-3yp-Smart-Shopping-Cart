@@ -27,25 +27,45 @@ title: Smart Shopping Cart
 
 #### Table of Contents
 1. [Introduction](#introduction)
-2. [Solution Architecture](#solution-architecture )
-3. [Hardware & Software Designs](#hardware-and-software-designs)
-4. [Testing](#testing)
-5. [Detailed budget](#detailed-budget)
-6. [Conclusion](#conclusion)
-7. [Links](#links)
+2. [Problem Statement](#problem-statement)
+3. [Motivation](#motivation)
+4. [Proposed Solution](#proposed-solution)
+5. [High Level Arcitecture](#high-level-architecture)
+6. [Hardware & Software Designs](#hardware-and-software-designs)
+7. [Testing](#testing)
+8. [Detailed budget](#detailed-budget)
+9. [Conclusion](#conclusion)
+10. [Links](#links)
 
 ## Introduction
 
-Description of the real world problem and solution, impact
+Our Smart Shopping Cart leverages sensors and RFID technology to transform the shopping experience. It ensures effortless item tracking, personalized assistance, and real-time insights, simplifying shopping for customers while empowering retailers with valuable data.
 
 
-## Solution Architecture
 
-High level diagram + description
+## Problem statement
+
+long checkout queues.
+difficulty in tracking spending during shopping, 
+ inefficiency in navigating stores to locate items. 
+customers lack a seamless way to view their complete bill in real-time.
+
+## Motivation
+
+Long queues and delays at checkout counters cause frustration for shoppers.
+
+Customers struggle to track spending during shopping, leading to budget concerns.
+
+Navigating large stores to find items is time-consuming and inefficient.
+
+## Proposed Solution
 
 ## Hardware and Software Designs
 
 Detailed designs with many sub-sections
+
+##High Level Architecture
+
 
 ## Testing
 
@@ -55,9 +75,17 @@ Testing done on hardware and software, detailed + summarized results
 
 All items and costs
 
-| Item          | Quantity  | Unit Cost  | Total  |
-| ------------- |:---------:|:----------:|-------:|
-| Sample item   | 5         | 10 LKR     | 50 LKR |
+| Item          | Quantity  | Unit Cost   | Total     |
+| ------------- |:---------:|:----------: |-------:   |
+| ESP32         | 2        | 1740 LKR     | 3480 LKR  |
+| RFID reader and RFID tags        | 1         | 450 LKR    | 450 LKR  |
+| Active Buzzer       | 1         | 400 LKR    | 400 LKR  |
+| JRHC Handheld 2D Barcode Scanner       | 1         | 14900.00 LKR    | 14900.00 LKR  |
+| HX711 Load Cell       | 1         | 1290.00 LKR    | 1290.00 LKR  |
+| 10kg Load Cell        | 1         | 1340.00 LKR    | 1340.00 LKR  |
+| 12V Li-Ion Battery        | 1         | 5600.00 LKR    | 5600.00 LKR  |
+| Step-Down Converter        | 1         | 960.00 LKR  | 960.00 LKR  |
+
 
 ## Conclusion
 
