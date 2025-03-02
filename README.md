@@ -1,7 +1,7 @@
-# e20-3yp-Smart-Shhoppingg-Cart
+# e20-3yp-Smart-Shopping-Cart
 
 A smart shopping cart that enhances the retail experience through real-time item tracking and personalized shopping assistance.
-
+```
 {
   "title": "Smart Cart",
   "team": [
