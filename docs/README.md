@@ -70,7 +70,7 @@ Enhanced Checkout Process
 Detailed designs with many sub-sections
 
 ##High Level Architecture
-
+[High level architecture](./images/high_level_architecture.png)
 
 ## Testing
 
