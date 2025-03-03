@@ -4,7 +4,7 @@ const useSidebar = () => {
   const [isSidebarVisible, setSidebarVisible] = useState<boolean>(true);
 
   const toggleSidebar = () => {
-    setSidebarVisible((prev) => !prev);
+    setSidebarVisible(!isSidebarVisible);
   };
 
   const closeSidebar = () => {

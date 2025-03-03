@@ -1,20 +1,15 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Stage, Layer } from "react-konva";
-import Toolbar from "./toolbar/Toolbar";
-import Sidebar from "./sidebar/Sidebar";
-import FixtureComp from "./canvas/FixtureComp";
-import { FixtureContext } from "../../context/FixtureContext";
-import useSidebar from "../../hooks/useSidebar";
+import Toolbar from "../../components/toolbar/Toolbar";
+import FixtureComp from "../../components/layout_editor/canvas/FixtureComp";
+import { useFixtureContext } from "../../hooks/useFixtureContext";
+import { useSidebarContext } from "../../hooks/useSidebarContext";
+import Sidebar from "../../components/sidebar/Sidebar";
 
 const LayoutEditor: React.FC = () => {
-  const fixtureContext = useContext(FixtureContext);
 
-  if (!fixtureContext) {
-    throw new Error("FixtureContext must be used within a FixtureProvider");
-  }
-
-  const { fixtures, fixturePosition, fixtureName, toggleEditMode } =
-    fixtureContext;
+  const { fixtures, toggleEditMode } = useFixtureContext();
+  const {isSidebarVisible} = useSidebarContext();
 
   const [dimensions, setDimensions] = useState({
     width: typeof window !== "undefined" ? window.innerWidth : 800,
@@ -35,25 +30,22 @@ const LayoutEditor: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const { isSidebarVisible, toggleSidebar, closeSidebar } = useSidebar();
-
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Toolbar onToggleMode={toggleEditMode} onToggleSidebar={toggleSidebar} />
+      <Toolbar onToggleMode={toggleEditMode} />
 
-      {isSidebarVisible && (
-        <Sidebar
-          position={fixturePosition}
-          name={fixtureName}
-          onClose={closeSidebar}
-        />
-      )}
-
+      {isSidebarVisible && <Sidebar />}
+      
       <div style={{ marginTop: "50px", flex: 1 }}>
         <Stage
           key={Object.keys(fixtures).length}
           width={dimensions.width}
           height={dimensions.height}
+          style={{
+            borderRadius: "10px",
+            background: "#cdcdcd",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.08)",
+          }}
         >
           <Layer>
             {Object.values(fixtures).map((item) => (
