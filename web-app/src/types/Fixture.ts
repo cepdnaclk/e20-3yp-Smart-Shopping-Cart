@@ -9,6 +9,7 @@ type Fixture = {
     points: number[];
     fill: string;
     name: string;
+    color?: string; // Add color property
     scaleX: number;
     scaleY: number;
     rotation: number;
