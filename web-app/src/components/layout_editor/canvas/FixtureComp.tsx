@@ -26,7 +26,7 @@ const FixtureComp = React.memo(({ item }: { item: Fixture }) => {
         x={item.x}
         y={item.y}
         points={item.points}
-        fill={item.fill}
+        fill={item.color || "orange"} // Default color
         closed
         draggable
         stroke={selectedFixtureId === item.id ? "white" : "black"}
