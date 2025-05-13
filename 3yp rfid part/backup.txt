@@ -1,0 +1,231 @@
+ main.cpp
+
+#include <Arduino.h>
+#include "wifi_handler.h"
+#include "mqtt_handler.h"
+#include "rfid_handler.h"
+
+void setup() {
+  Serial.begin(115200);
+  delay(100);
+
+  initBuzzer();
+  initRFID();
+  connectWiFi();
+  syncTime();
+  loadCertificates();
+  setupMQTT();
+}
+
+void loop() {
+  handleMQTT();
+  checkRFIDTag();
+}
+
+===========
+wifi_handler.h
+
+#ifndef WIFI_HANDLER_H
+#define WIFI_HANDLER_H
+
+void connectWiFi();
+void syncTime();
+
+#endif
+
+==================
+wifi_handler.cpp
+
+
+#include "wifi_handler.h"
+#include <ESP8266WiFi.h>
+#include <time.h>
+
+const char *ssid = "Don";
+const char *password = "Don636201065@";
+
+void connectWiFi() {
+  Serial.print("Connecting to WiFi SSID: ");
+  Serial.println(ssid);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+
+  int attempt = 0;
+  while (WiFi.status() != WL_CONNECTED && attempt < 30) {
+    delay(500);
+    Serial.print(".");
+    attempt++;
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nWiFi connected successfully!");
+    Serial.print("ESP IP Address: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("\nFailed to connect to WiFi.");
+  }
+}
+
+void syncTime() {
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+  Serial.print("Synchronizing NTP time");
+  time_t now = time(nullptr);
+  int attempts = 0;
+  while (now < 8 * 3600 * 2 && attempts < 30) {
+    delay(500);
+    Serial.print(".");
+    now = time(nullptr);
+    attempts++;
+  }
+
+  if (attempts < 30) {
+    Serial.println("\nTime synchronized!");
+  } else {
+    Serial.println("\nTime synchronization failed!");
+  }
+}
+
+============
+
+mqtt_handler.h
+
+#ifndef MQTT_HANDLER_H
+#define MQTT_HANDLER_H
+
+#include <PubSubClient.h>
+
+void loadCertificates();
+void setupMQTT();
+void handleMQTT();
+extern PubSubClient client;
+
+#endif
+================
+
+mqtt_handler.cpp
+
+#include "mqtt_handler.h"
+#include <ESP8266WiFi.h>
+#include <WiFiClientSecureBearSSL.h>
+#include <LittleFS.h>
+
+const char *awsEndpoint = "ajc4roklp9rho-ats.iot.us-east-1.amazonaws.com";
+
+BearSSL::WiFiClientSecure espClient;
+PubSubClient client(espClient);
+
+BearSSL::X509List client_crt;
+BearSSL::PrivateKey client_key;
+BearSSL::X509List ca_cert;
+
+void loadCertificates() {
+  if (!LittleFS.begin()) {
+    Serial.println("Failed to mount LittleFS");
+    return;
+  }
+
+  File cert = LittleFS.open("/certificate.pem.crt", "r");
+  File privateKey = LittleFS.open("/private.pem.key", "r");
+  File ca = LittleFS.open("/AmazonRootCA1.pem", "r");
+
+  if (!cert || !privateKey || !ca) {
+    Serial.println("Certificate files missing or failed to open");
+    return;
+  }
+
+  client_crt.append(cert.readString().c_str());
+  client_key.parse(privateKey.readString().c_str());
+  ca_cert.append(ca.readString().c_str());
+
+  espClient.setClientRSACert(&client_crt, &client_key);
+  espClient.setTrustAnchors(&ca_cert);
+
+  cert.close();
+  privateKey.close();
+  ca.close();
+
+  Serial.println("Certificates loaded successfully!");
+}
+
+void setupMQTT() {
+  client.setServer(awsEndpoint, 8883);
+}
+
+void handleMQTT() {
+  while (!client.connected()) {
+    Serial.print("Connecting to AWS IoT...");
+    if (client.connect("SmartCartESP")) {
+      Serial.println("Connected to AWS IoT");
+    } else {
+      Serial.printf("Connection failed, rc=%d. Retrying in 5 seconds...\n", client.state());
+      delay(5000);
+    }
+  }
+  client.loop();
+}
+==================
+
+rfid_handler.h
+
+#ifndef RFID_HANDLER_H
+#define RFID_HANDLER_H
+
+void initRFID();
+void checkRFIDTag();
+void initBuzzer();
+
+#endif
+==================
+
+rfid_handler.cpp
+
+#include "rfid_handler.h"
+#include <SPI.h>
+#include <MFRC522.h>
+#include "mqtt_handler.h"
+
+#define SS_PIN D2
+#define RST_PIN D1
+#define BUZZER_PIN D8
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+void initRFID() {
+  SPI.begin(); // SCK=D5, MOSI=D7, MISO=D6
+  mfrc522.PCD_Init();
+  Serial.println("RFID reader initialized.");
+}
+
+void initBuzzer() {
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW);
+}
+
+void checkRFIDTag() {
+  if (!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial()) return;
+
+  String tag = "";
+  for (byte i = 0; i < mfrc522.uid.size; i++) {
+    tag += String(mfrc522.uid.uidByte[i], HEX);
+  }
+  tag.toUpperCase();
+
+  Serial.print("Tag detected: ");
+  Serial.println(tag);
+
+  digitalWrite(BUZZER_PIN, HIGH);
+  delay(200);
+  digitalWrite(BUZZER_PIN, LOW);
+
+  String payload = "{\"tag\": \"" + tag + "\"}";
+  if (client.publish("smartcart/payment", payload.c_str())) {
+    Serial.println("Tag published to MQTT.");
+  } else {
+    Serial.println("Failed to publish tag.");
+  }
+
+  delay(1500);
+  mfrc522.PICC_HaltA();
+  mfrc522.PCD_StopCrypto1();
+}
