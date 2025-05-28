@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { useEdgeContext } from "../../hooks/useEdgeContext";
 import { useFixtureContext } from "../../hooks/useFixtureContext";
 import { useSidebarContext } from "../../hooks/useSidebarContext";
-import { X, Menu } from "lucide-react"; // Import icons
+import { Menu } from "lucide-react"; // Import icons
+import {
+  clearStoreData,
+  saveItemMap,
+  saveStoreLayout,
+} from "../../utils/SaveLocal";
+import { useItemContext } from "../../hooks/useItemContext";
 
 interface ToolbarProps {
   onToggleMode: (mode: string) => void;
@@ -10,8 +16,10 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
   const { setSelectedEdge } = useEdgeContext();
-  const { selectedFixtureId, addFixture, deleteFixture } = useFixtureContext();
-  const { toggleSidebar, closeInventoryEditor, isInventoryOpen } = useSidebarContext();
+  const { fixtures, selectedFixtureId, addFixture, deleteFixture } =
+    useFixtureContext();
+  const { toggleSidebar, isInventoryOpen } = useSidebarContext();
+  const { itemMap } = useItemContext();
   const [mode, setMode] = useState("Object Mode");
 
   const handleModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -68,17 +76,27 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
       {isInventoryOpen ? (
         // Inventory Editor Header Actions
         <button
-          onClick={closeInventoryEditor}
-          style={{
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: "#e74c3c",
-            fontSize: "18px",
+          onClick={() => {
+            saveItemMap(itemMap, fixtures);
           }}
-          title="Close Editor"
+          style={{
+            padding: "8px 12px",
+            fontSize: "14px",
+            fontWeight: 500,
+            borderRadius: "6px",
+            backgroundColor: "#2ecc71",
+            color: "white",
+            cursor: "pointer",
+            transition: "background-color 0.2s",
+          }}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.backgroundColor = "#27ae60")
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.backgroundColor = "#2ecc71")
+          }
         >
-          <X size={24} />
+          Save Changes
         </button>
       ) : (
         // Layout Editor Toolbar Actions
@@ -108,7 +126,8 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
             disabled={selectedFixtureId === null}
             style={{
               padding: "10px 16px",
-              backgroundColor: selectedFixtureId === null ? "#e0e0e0" : "#e74c3c",
+              backgroundColor:
+                selectedFixtureId === null ? "#e0e0e0" : "#e74c3c",
               color: selectedFixtureId === null ? "#999" : "white",
               border: "none",
               borderRadius: "6px",
@@ -136,12 +155,62 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
               color: "#676767",
               backgroundColor: "#ffffff",
               cursor: "pointer",
+              marginRight: "10px",
             }}
             title="Select Mode"
           >
             <option value="Object Mode">Object Mode</option>
             <option value="Edit Mode">Edit Mode</option>
           </select>
+
+          <button
+            onClick={() => {
+              saveStoreLayout(fixtures);
+            }}
+            style={{
+              padding: "8px 12px",
+              fontSize: "14px",
+              fontWeight: 500,
+              borderRadius: "6px",
+              backgroundColor: "#2ecc71",
+              color: "white",
+              cursor: "pointer",
+              transition: "background-color 0.2s",
+              marginRight: "10px",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#27ae60")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#2ecc71")
+            }
+          >
+            Save Changes
+          </button>
+
+          <button
+            onClick={() => {
+              clearStoreData();
+            }}
+            style={{
+              padding: "8px 12px",
+              fontSize: "14px",
+              fontWeight: 500,
+              borderRadius: "6px",
+              backgroundColor: "#2ecc71",
+              color: "white",
+              cursor: "pointer",
+              transition: "background-color 0.2s",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#27ae60")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#2ecc71")
+            }
+          >
+            Clear data
+          </button>
         </div>
       )}
     </div>

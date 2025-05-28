@@ -6,7 +6,7 @@ import { useEdgeContext } from "../../../hooks/useEdgeContext";
 import { useNodeContext } from "../../../hooks/useNodeContext";
 import { useFixtureContext } from "../../../hooks/useFixtureContext";
 
-const FixtureComp = React.memo(({ item }: { item: Fixture }) => {
+const FixtureComp = React.memo(({ fixture }: { fixture: Fixture }) => {
   const { selectedNode, handleSelectNode, handleNodeDragMove } =
     useNodeContext();
   const { selectedEdge, setSelectedEdge, handleSelectEdge } = useEdgeContext();
@@ -19,47 +19,47 @@ const FixtureComp = React.memo(({ item }: { item: Fixture }) => {
   } = useFixtureContext();
 
   return (
-    <React.Fragment key={item.id}>
+    <React.Fragment key={fixture.id}>
       {/* Main Polygon */}
       <Line
-        id={item.id.toString()}
-        x={item.x}
-        y={item.y}
-        points={item.points}
-        fill={item.color || "orange"} // Default color
+        id={fixture.id}
+        x={fixture.x}
+        y={fixture.y}
+        points={fixture.points}
+        fill={fixture.color || "orange"} // Default color
         closed
         draggable
-        stroke={selectedFixtureId === item.id ? "white" : "black"}
-        strokeWidth={selectedFixtureId === item.id ? 3 : 1}
+        stroke={selectedFixtureId === fixture.id ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.1)"}
+        strokeWidth={selectedFixtureId === fixture.id ? 3 : 1}
         onClick={() => {
-          handleSelectFixture(item.id);
+          handleSelectFixture(fixture.id);
           setSelectedEdge(null);
         }}
         onDragStart={() => {
-          handleSelectFixture(item.id);
+          handleSelectFixture(fixture.id);
           setSelectedEdge(null);
         }}
-        onDragMove={(e) => handleDragMoveFixture(e, item.id)}
+        onDragMove={(e) => handleDragMoveFixture(e, fixture.id)}
       />
 
       {/* Invisible Edges (Selectable in edit mode) */}
-      {selectedFixtureId === item.id &&
+      {selectedFixtureId === fixture.id &&
         editMode &&
-        item.points.map((_, i) => {
+        fixture.points.map((_, i) => {
           if (i % 2 === 0) {
-            const nextIndex = (i + 2) % item.points.length; // Wrap around for last edge
+            const nextIndex = (i + 2) % fixture.points.length; // Wrap around for last edge
             return (
               <Line
-                key={`${item.id}-edge-${i / 2}`}
-                x={item.x}
-                y={item.y}
+                key={`${fixture.id}-edge-${i / 2}`}
+                x={fixture.x}
+                y={fixture.y}
                 points={[
-                  item.points[i],
-                  item.points[i + 1], // Current point
-                  item.points[nextIndex],
-                  item.points[nextIndex + 1], // Next point (wrap around)
+                  fixture.points[i],
+                  fixture.points[i + 1], // Current point
+                  fixture.points[nextIndex],
+                  fixture.points[nextIndex + 1], // Next point (wrap around)
                 ]}
-                stroke={selectedEdge === i / 2 ? "blue" : "transparent"}
+                stroke={selectedEdge === i / 2 ? "rgb(0, 0, 0)" : "transparent"}
                 strokeWidth={5}
                 onClick={() => {
                   handleSelectEdge(i / 2);
@@ -72,22 +72,22 @@ const FixtureComp = React.memo(({ item }: { item: Fixture }) => {
         })}
 
       {/* Nodes (Only visible in edit mode) */}
-      {selectedFixtureId === item.id &&
+      {selectedFixtureId === fixture.id &&
         editMode &&
-        item.points.map((_, index) =>
+        fixture.points.map((_, index) =>
           index % 2 === 0 ? (
             <NodeComp
-              key={`${item.id}-node-${index / 2}`}
-              x={item.x + item.points[index]}
-              y={item.y + item.points[index + 1]}
+              key={`${fixture.id}-node-${index / 2}`}
+              x={fixture.x + fixture.points[index]}
+              y={fixture.y + fixture.points[index + 1]}
               mode="edit"
-              fill={selectedNode === index / 2 ? "blue" : "white"}
+              fill={selectedNode === index / 2 ? "rgb(0, 0, 0)" : "rgba(0, 0, 0, 0.3)"}
               onClick={() => {
                 handleSelectNode(index / 2);
                 if (selectedEdge != null) handleSelectEdge(null); // Deselect edge when a node is selected
               }}
               onDragMove={(e) =>
-                handleNodeDragMove(e, item.id, index, setFixtures)
+                handleNodeDragMove(e, fixture.id, index, setFixtures)
               }
             />
           ) : null

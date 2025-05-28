@@ -1,6 +1,7 @@
-import { createContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useState, ReactNode } from "react";
 import Fixture from "../types/Fixture";
 import { v4 } from "uuid";
+import { loadStoreLayout } from "../utils/LoadLocal";
 
 interface FixtureContextType {
   fixtures: Record<string, Fixture>;
@@ -25,7 +26,6 @@ interface FixtureContextType {
   handleSelectFixture: (id: string) => void;
   deleteFixture: () => void;
   toggleEditMode: () => void;
-  saveFixturesToLocal: () => void;
 }
 
 export const FixtureContext = createContext<FixtureContextType | undefined>(
@@ -34,13 +34,10 @@ export const FixtureContext = createContext<FixtureContextType | undefined>(
 
 export const FixtureProvider = ({ children }: { children: ReactNode }) => {
   const [fixtures, setFixtures] = useState<Record<string, Fixture>>(() => {
-    const savedFixtures = localStorage.getItem("fixtureConfig");
-    return savedFixtures ? JSON.parse(savedFixtures) : {};
+    const savedStoreLayout = loadStoreLayout();
+    console.log("Initial fixtures loaded:", savedStoreLayout);
+    return savedStoreLayout || {};
   });
-
-  useEffect(() => {
-    localStorage.setItem("fixtureConfig", JSON.stringify(fixtures));
-  }, [fixtures]); // Automatically save fixtures whenever they change
 
   const [selectedFixtureId, setSelectedFixtureId] = useState<string | null>(
     null
@@ -77,12 +74,8 @@ export const FixtureProvider = ({ children }: { children: ReactNode }) => {
       x: 500,
       y: 500,
       points,
-      fill: "#f5a051",
       color: "#f5a051",
-      name: "Fixture",
-      scaleX: 1,
-      scaleY: 1,
-      rotation: 0,
+      name: "New Fixture",
     };
     setFixtures((prevItems) => ({ ...prevItems, [newId]: newFixture }));
   };
@@ -163,12 +156,6 @@ export const FixtureProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const saveFixturesToLocal = () => {
-    const fixtureData = JSON.stringify(fixtures, null, 2);
-    localStorage.setItem("fixtureConfig", fixtureData);
-    console.log("Fixture configuration saved!");
-  };
-
   return (
     <FixtureContext.Provider
       value={{
@@ -192,7 +179,6 @@ export const FixtureProvider = ({ children }: { children: ReactNode }) => {
         handleSelectFixture,
         deleteFixture,
         toggleEditMode,
-        saveFixturesToLocal,
       }}
     >
       {children}

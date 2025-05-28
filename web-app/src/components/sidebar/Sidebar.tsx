@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { useEdgeContext } from "../../hooks/useEdgeContext";
 import { useFixtureContext } from "../../hooks/useFixtureContext";
 import { useNodeContext } from "../../hooks/useNodeContext";
@@ -9,6 +10,7 @@ import NescafeImg from "../../../assets/Nescafe_Ice_Cold_Coffee_180ml.jpg";
 import MiloImg from "../../../assets/Milo_Food_Drink_Chocolate_Tetra_180ml.jpg";
 import KistJamImg from "../../../assets/Kist_Jam_Mixed_Fruit_510g.jpg";
 import KrestSausageImg from "../../../assets/Krest_Chicken_Sausages_Bockwurst_400g.jpg";
+import Item from "../../types/Item";
 
 interface SidebarProps {}
 
@@ -24,8 +26,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
     handleFixtureNameChange,
     handleFixtureColorChange,
     handleFixturePositionChange,
-    deleteFixture,
-    saveFixturesToLocal,
   } = useFixtureContext();
   const { closeSidebar, toggleInventoryEditor, isInventoryOpen } =
     useSidebarContext();
@@ -48,9 +48,22 @@ const Sidebar: React.FC<SidebarProps> = () => {
     }
   }, [selectedFixtureId, fixtures]);
 
-  const handleDragStart = (event: React.DragEvent, item: string) => {
-    event.dataTransfer.setData("text/plain", item); // Store dragged item
+  const handleDragStart = (
+  event: React.DragEvent<HTMLDivElement>,
+  itemInfo: { name: string; image: string }
+) => {
+  const item: Item = {
+    id: uuidv4(), // or any method to generate unique ids
+    name: itemInfo.name,
+    row: 0,
+    col: 0,
+    index: 0
   };
+
+  event.dataTransfer.setData("source", "sidebar");
+  event.dataTransfer.setData("application/json", JSON.stringify(item));
+
+};
 
   return (
     <div
@@ -139,7 +152,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
               <div
                 key={index}
                 draggable
-                onDragStart={(e) => handleDragStart(e, item.name)}
+                onDragStart={(e) => handleDragStart(e, item)}
                 style={{
                   padding: "10px",
                   backgroundColor: "white",
@@ -224,7 +237,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
             </label>
             <div style={{ display: "flex", gap: "10px" }}>
               <div style={{ flex: 1, minWidth: "0" }}>
-                {" "}
                 {/* Prevents overflow */}
                 <label
                   style={{
@@ -366,26 +378,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
             >
               Delete Node
             </button>
-
-            <button
-              onClick={deleteFixture}
-              disabled={selectedFixtureId === null}
-              style={{
-                width: "100%",
-                padding: "10px 0",
-                backgroundColor:
-                  selectedFixtureId === null ? "#e0e0e0" : "#e74c3c",
-                color: selectedFixtureId === null ? "#999" : "white",
-                border: "none",
-                borderRadius: "6px",
-                cursor: selectedFixtureId === null ? "not-allowed" : "pointer",
-                fontSize: "14px",
-                fontWeight: 500,
-                transition: "background-color 0.2s",
-              }}
-            >
-              Delete Shape
-            </button>
           </div>
         </div>
       )}
@@ -399,20 +391,20 @@ const Sidebar: React.FC<SidebarProps> = () => {
       >
         <button
           onClick={toggleInventoryEditor}
-          disabled={selectedFixtureId === null && !isInventoryOpen}
+          disabled={selectedEdge === null && !isInventoryOpen}
           style={{
             width: "100%",
             padding: "10px 0",
             backgroundColor:
-              selectedFixtureId === null && !isInventoryOpen
+              selectedEdge === null && !isInventoryOpen
                 ? "#e0e0e0"
                 : "#f0f0f0",
             color:
-              selectedFixtureId === null && !isInventoryOpen ? "#999" : "#333",
+              selectedEdge === null && !isInventoryOpen ? "#999" : "#333",
             border: "1px solid #ddd",
             borderRadius: "6px",
             cursor:
-              selectedFixtureId === null && !isInventoryOpen
+              selectedEdge === null && !isInventoryOpen
                 ? "not-allowed"
                 : "pointer",
             fontSize: "14px",
@@ -422,31 +414,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
           }}
         >
           {isInventoryOpen ? "Edit Properties" : "Open Inventory"}
-        </button>
-
-        <button
-          onClick={saveFixturesToLocal}
-          style={{
-            width: "100%",
-            padding: "12px 0",
-            backgroundColor: "#2ecc71",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: 500,
-            transition: "background-color 0.2s",
-            boxShadow: "0 2px 4px rgba(46,204,113,0.2)",
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#27ae60")
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#2ecc71")
-          }
-        >
-          Save Layout
         </button>
       </div>
     </div>

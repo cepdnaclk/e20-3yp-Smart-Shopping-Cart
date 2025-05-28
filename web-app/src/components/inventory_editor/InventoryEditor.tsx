@@ -1,17 +1,18 @@
 import React from "react";
 import { ShelfProvider } from "../../context/ShelfContext";
-import { ItemProvider } from "../../context/ItemContext";
-import RackSideSelector from "./RackSideSelector";
-import ShelfList from "./ShelfList";
+import ItemContainer from "./ItemContainer";
 import { useSidebarContext } from "../../hooks/useSidebarContext";
+import { useEdgeContext } from "../../hooks/useEdgeContext";
+import { useFixtureContext } from "../../hooks/useFixtureContext";
 
 const InventoryEditor: React.FC = () => {
   const { isInventoryOpen } = useSidebarContext();
+  const { selectedEdge } = useEdgeContext();
+  const { selectedFixtureId } = useFixtureContext();
 
   if (!isInventoryOpen) return null; // Hide when not open
 
   return (
-    <ItemProvider>
       <ShelfProvider>
         <div
           style={{
@@ -43,12 +44,14 @@ const InventoryEditor: React.FC = () => {
               scrollbarColor: "#aaaaaa #f0f0f0",
             }}
           >
-            <RackSideSelector />
-            <ShelfList />
+            {selectedEdge !== null && (
+              <ItemContainer
+                edge={`${selectedFixtureId}-edge-${selectedEdge / 2}`}
+              />
+            )}
           </div>
         </div>
       </ShelfProvider>
-    </ItemProvider>
   );
 };
 

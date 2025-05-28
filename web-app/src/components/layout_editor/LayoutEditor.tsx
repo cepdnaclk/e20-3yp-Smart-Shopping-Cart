@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Stage, Layer } from "react-konva";
-import Toolbar from "../../components/toolbar/Toolbar";
 import FixtureComp from "../../components/layout_editor/canvas/FixtureComp";
 import { useFixtureContext } from "../../hooks/useFixtureContext";
 import { useSidebarContext } from "../../hooks/useSidebarContext";
@@ -8,7 +7,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 
 const LayoutEditor: React.FC = () => {
 
-  const { fixtures, toggleEditMode } = useFixtureContext();
+  const { fixtures } = useFixtureContext();
   const {isSidebarVisible} = useSidebarContext();
 
   const [dimensions, setDimensions] = useState({
@@ -32,7 +31,6 @@ const LayoutEditor: React.FC = () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Toolbar onToggleMode={toggleEditMode} />
 
       {isSidebarVisible && <Sidebar />}
       
@@ -43,13 +41,13 @@ const LayoutEditor: React.FC = () => {
           height={dimensions.height}
           style={{
             borderRadius: "10px",
-            background: "#cdcdcd",
+            background: "rgb(246, 252, 254)",
             boxShadow: "0 2px 10px rgba(0, 0, 0, 0.08)",
           }}
         >
           <Layer>
-            {Object.values(fixtures).map((item) => (
-              <FixtureComp key={item.id} item={item} />
+            {Object.values(fixtures).map((fixture) => (
+              <FixtureComp key={fixture.id} fixture={fixture} />
             ))}
           </Layer>
         </Stage>
