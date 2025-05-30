@@ -1,12 +1,22 @@
 import Fixture from "../types/Fixture";
 import Item from "../types/Item";
 
-// These types represent the actual values (not wrapped in an object)
+/**
+ * Data persistence utilities for saving application state to localStorage
+ * Provides both combined and individual save operations with user feedback
+ */
+
+// Type aliases for cleaner function signatures
 type ItemMap = Record<string, Item[][][]>;
 type FixturesMap = Record<string, Fixture>;
 
-// Accept direct value instead of destructured object
-export const saveItemMap = (itemMap: ItemMap, fixtures: FixturesMap) => {
+/**
+ * Saves both item map and fixtures (layout) to localStorage
+ * Provides user feedback via alert dialog
+ * @param itemMap - Complete item mapping data
+ * @param fixtures - Complete fixture layout data
+ */
+export const saveData = (itemMap: ItemMap, fixtures: FixturesMap) => {
   try {
     localStorage.setItem("item_map", JSON.stringify(itemMap));
     console.log("Item map saved:", JSON.stringify(itemMap));
@@ -18,6 +28,11 @@ export const saveItemMap = (itemMap: ItemMap, fixtures: FixturesMap) => {
   }
 };
 
+/**
+ * Saves fixtures (layout) to localStorage
+ * Provides user feedback via alert dialog
+ * @param fixtures - Complete fixture layout data
+ */
 export const saveStoreLayout = (fixtures: FixturesMap) => {
   try {
     localStorage.setItem("store_layout", JSON.stringify(fixtures));
@@ -28,7 +43,11 @@ export const saveStoreLayout = (fixtures: FixturesMap) => {
   }
 };
 
-export const clearStoreData = () => {
+/**
+ * Completely clears all application data from localStorage
+ * Nuclear option for resetting application state
+ */
+export const clearStoredData = () => {
   try {
     localStorage.removeItem("store_layout");
     localStorage.removeItem("item_map");
@@ -39,4 +58,3 @@ export const clearStoreData = () => {
     console.error("Error clearing store data:", error);
   }
 };
-

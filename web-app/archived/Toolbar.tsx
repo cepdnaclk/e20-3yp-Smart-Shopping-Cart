@@ -1,32 +1,39 @@
-import React, { useState } from "react";
-import { useEdgeContext } from "../../hooks/useEdgeContext";
-import { useFixtureContext } from "../../hooks/useFixtureContext";
-import { useSidebarContext } from "../../hooks/useSidebarContext";
+import React from "react";
+import { useEdgeContext } from "../src/hooks/useEdgeContext";
+import { useFixtureContext } from "../src/hooks/useFixtureContext";
+import { useSidebarContext } from "../src/hooks/useSidebarContext";
 import { Menu } from "lucide-react"; // Import icons
 import {
-  clearStoreData,
-  saveItemMap,
-  saveStoreLayout,
-} from "../../utils/SaveLocal";
-import { useItemContext } from "../../hooks/useItemContext";
+  clearStoredData,
+  saveData,
+} from "../src/utils/SaveLocal";
+import { useItemContext } from "../src/hooks/useItemContext";
+import { useNodeContext } from "../src/hooks/useNodeContext";
 
 interface ToolbarProps {
-  onToggleMode: (mode: string) => void;
+  onToggleModes: (mode: string) => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ onToggleModes }) => {
   const { setSelectedEdge } = useEdgeContext();
-  const { fixtures, selectedFixtureId, addFixture, deleteFixture } =
-    useFixtureContext();
-  const { toggleSidebar, isInventoryOpen } = useSidebarContext();
+  const { setSelectedNode } = useNodeContext();
+  const {
+    fixtures,
+    selectedFixtureId,
+    addFixture,
+    deleteFixture,
+    mode,
+    setMode,
+  } = useFixtureContext();
+  const { toggleSidebar, isItemMapEditorOpen } = useSidebarContext();
   const { itemMap } = useItemContext();
-  const [mode, setMode] = useState("Object Mode");
 
   const handleModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newMode = event.target.value;
     setMode(newMode);
     setSelectedEdge(null);
-    onToggleMode(newMode);
+    onToggleModes(newMode);
+    setSelectedNode(null);
   };
 
   return (
@@ -69,35 +76,61 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
 
       {/* Center: Dynamic Title */}
       <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 600 }}>
-        {isInventoryOpen ? "Inventory Editor" : "Layout Editor"}
+        {isItemMapEditorOpen ? "Item Map Editor" : "Layout Editor"}
       </h2>
 
       {/* Right Side: Dynamic Buttons */}
-      {isInventoryOpen ? (
+      {isItemMapEditorOpen ? (
         // Inventory Editor Header Actions
-        <button
-          onClick={() => {
-            saveItemMap(itemMap, fixtures);
-          }}
-          style={{
-            padding: "8px 12px",
-            fontSize: "14px",
-            fontWeight: 500,
-            borderRadius: "6px",
-            backgroundColor: "#2ecc71",
-            color: "white",
-            cursor: "pointer",
-            transition: "background-color 0.2s",
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#27ae60")
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#2ecc71")
-          }
-        >
-          Save Changes
-        </button>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <button
+            onClick={() => {
+              saveData(itemMap, fixtures);
+            }}
+            style={{
+              padding: "8px 12px",
+              fontSize: "14px",
+              fontWeight: 500,
+              borderRadius: "6px",
+              backgroundColor: "#2ecc71",
+              color: "white",
+              marginRight: "10px",
+              cursor: "pointer",
+              transition: "background-color 0.2s",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#27ae60")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#2ecc71")
+            }
+          >
+            Save Changes
+          </button>
+          <button
+            onClick={() => {
+              clearStoredData();
+            }}
+            style={{
+              padding: "8px 12px",
+              fontSize: "14px",
+              fontWeight: 500,
+              border: "none",
+              borderRadius: "6px",
+              backgroundColor: "rgb(238, 56, 0)",
+              color: "white",
+              cursor: "pointer",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "rgb(208, 49, 0)")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "rgb(238, 56, 0)")
+            }
+          >
+            Clear All
+          </button>
+        </div>
       ) : (
         // Layout Editor Toolbar Actions
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -105,7 +138,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
             onClick={addFixture}
             style={{
               padding: "10px 16px",
-              backgroundColor: "#4a90e2",
+              backgroundColor: "rgb(3, 160, 222)",
               color: "white",
               border: "none",
               borderRadius: "6px",
@@ -118,6 +151,12 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
               alignItems: "center",
             }}
             title="Add Fixture"
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "rgb(2, 141, 196)")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "rgb(3, 160, 222)")
+            }
           >
             Add Fixture
           </button>
@@ -127,7 +166,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
             style={{
               padding: "10px 16px",
               backgroundColor:
-                selectedFixtureId === null ? "#e0e0e0" : "#e74c3c",
+                selectedFixtureId === null
+                  ? "rgb(224, 224, 224)"
+                  : "rgb(238, 56, 0)",
               color: selectedFixtureId === null ? "#999" : "white",
               border: "none",
               borderRadius: "6px",
@@ -138,12 +179,25 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
               transition: "background-color 0.2s",
             }}
             title="Delete Selected"
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                selectedFixtureId === null
+                  ? "rgb(224, 224, 224)"
+                  : "rgb(208, 49, 0)")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                selectedFixtureId === null
+                  ? "rgb(224, 224, 224)"
+                  : "rgb(238, 56, 0)")
+            }
           >
             Delete Fixture
           </button>
 
           {/* Mode Dropdown */}
           <select
+            name="mode-select"
             value={mode}
             onChange={handleModeChange}
             style={{
@@ -159,30 +213,34 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
             }}
             title="Select Mode"
           >
-            <option value="Object Mode">Object Mode</option>
-            <option value="Edit Mode">Edit Mode</option>
+            <option id="Object Mode" value="Object Mode">
+              Object Mode
+            </option>
+            <option id="Edit Mode" value="Edit Mode">
+              Edit Mode
+            </option>
           </select>
 
           <button
             onClick={() => {
-              saveStoreLayout(fixtures);
+              saveData(itemMap, fixtures);
             }}
             style={{
               padding: "8px 12px",
               fontSize: "14px",
               fontWeight: 500,
+              border: "none",
               borderRadius: "6px",
-              backgroundColor: "#2ecc71",
+              backgroundColor: "rgb(14, 222, 3)",
               color: "white",
               cursor: "pointer",
-              transition: "background-color 0.2s",
               marginRight: "10px",
             }}
             onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#27ae60")
+              (e.currentTarget.style.backgroundColor = "rgb(10, 195, 0)")
             }
             onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#2ecc71")
+              (e.currentTarget.style.backgroundColor = "rgb(14, 222, 3)")
             }
           >
             Save Changes
@@ -190,26 +248,26 @@ const Toolbar: React.FC<ToolbarProps> = ({ onToggleMode }) => {
 
           <button
             onClick={() => {
-              clearStoreData();
+              clearStoredData();
             }}
             style={{
               padding: "8px 12px",
               fontSize: "14px",
               fontWeight: 500,
+              border: "none",
               borderRadius: "6px",
-              backgroundColor: "#2ecc71",
+              backgroundColor: "rgb(238, 56, 0)",
               color: "white",
               cursor: "pointer",
-              transition: "background-color 0.2s",
             }}
             onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#27ae60")
+              (e.currentTarget.style.backgroundColor = "rgb(208, 49, 0)")
             }
             onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#2ecc71")
+              (e.currentTarget.style.backgroundColor = "rgb(238, 56, 0)")
             }
           >
-            Clear data
+            Clear All
           </button>
         </div>
       )}

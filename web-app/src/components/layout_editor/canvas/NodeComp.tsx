@@ -1,6 +1,16 @@
 import React from "react";
 import { Circle } from "react-konva";
 
+/**
+ * NodeComp - Interactive Canvas Node Component
+ * 
+ * Represents individual vertices of fixtures that can be manipulated in edit mode.
+ * Provides drag-and-drop functionality and visual feedback for selection states.
+ * 
+ * @component
+ * @param {NodeCompProps} props - Component props
+ */
+
 const NodeComp = React.memo(
   ({
     x,
@@ -14,7 +24,7 @@ const NodeComp = React.memo(
   }: {
     x: number;
     y: number;
-    mode: "object" | "edit"; // Mode to control interactivity
+    mode: "object" | "edit";
     fill: string;
     onClick: (e: any) => void;
     onDragMove: (e: any) => void;

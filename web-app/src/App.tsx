@@ -4,7 +4,7 @@ import { FixtureProvider } from "./context/FixtureContext";
 import { EdgeProvider } from "./context/EdgeContext";
 import { NodeProvider } from "./context/NodeContext";
 import { SidebarProvider } from "./context/SidebarContext";
-import Main from "./components/Main";
+import UIManager from "./components/UIManager";
 import AuthPage from "./AuthPage";
 
 // Simple authentication check
@@ -39,7 +39,7 @@ const App: React.FC = () => {
                   path="/editor" 
                   element={
                     <ProtectedRoute>
-                      <Main />
+                      <UIManager />
                     </ProtectedRoute>
                   } 
                 />

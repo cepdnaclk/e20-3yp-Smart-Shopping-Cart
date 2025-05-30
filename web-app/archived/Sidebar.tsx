@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useEdgeContext } from "../../hooks/useEdgeContext";
-import { useFixtureContext } from "../../hooks/useFixtureContext";
-import { useNodeContext } from "../../hooks/useNodeContext";
-import { useSidebarContext } from "../../hooks/useSidebarContext";
+import { useEdgeContext } from "../src/hooks/useEdgeContext";
+import { useFixtureContext } from "../src/hooks/useFixtureContext";
+import { useNodeContext } from "../src/hooks/useNodeContext";
+import { useSidebarContext } from "../src/hooks/useSidebarContext";
 
 // Import images from the assets folder
 import NescafeImg from "../../../assets/Nescafe_Ice_Cold_Coffee_180ml.jpg";
 import MiloImg from "../../../assets/Milo_Food_Drink_Chocolate_Tetra_180ml.jpg";
 import KistJamImg from "../../../assets/Kist_Jam_Mixed_Fruit_510g.jpg";
 import KrestSausageImg from "../../../assets/Krest_Chicken_Sausages_Bockwurst_400g.jpg";
-import Item from "../../types/Item";
+import Item from "../src/types/Item";
 
-interface SidebarProps {}
+interface SidebarProps { }
 
 const Sidebar: React.FC<SidebarProps> = () => {
-  const { selectedNode, deleteNode } = useNodeContext();
+  const { selectedNode, deleteNode, nodePosition, setNodePosition } =
+    useNodeContext();
   const { selectedEdge, handleAddNodeToEdge } = useEdgeContext();
   const {
     selectedFixtureId,
@@ -27,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
     handleFixtureColorChange,
     handleFixturePositionChange,
   } = useFixtureContext();
-  const { closeSidebar, toggleInventoryEditor, isInventoryOpen } =
+  const { closeSidebar, toggleEditors, isItemMapEditorOpen } =
     useSidebarContext();
 
   const inventoryItems = [
@@ -49,21 +50,23 @@ const Sidebar: React.FC<SidebarProps> = () => {
   }, [selectedFixtureId, fixtures]);
 
   const handleDragStart = (
-  event: React.DragEvent<HTMLDivElement>,
-  itemInfo: { name: string; image: string }
-) => {
-  const item: Item = {
-    id: uuidv4(), // or any method to generate unique ids
-    name: itemInfo.name,
-    row: 0,
-    col: 0,
-    index: 0
+    event: React.DragEvent<HTMLDivElement>,
+    itemInfo: { name: string; image: string }
+  ) => {
+    const selectedFixture: Item = {
+      id: uuidv4(), // or any method to generate unique ids
+      name: itemInfo.name,
+      row: 0,
+      col: 0,
+      index: 0,
+    };
+
+    event.dataTransfer.setData("source", "sidebar");
+    event.dataTransfer.setData(
+      "application/json",
+      JSON.stringify(selectedFixture)
+    );
   };
-
-  event.dataTransfer.setData("source", "sidebar");
-  event.dataTransfer.setData("application/json", JSON.stringify(item));
-
-};
 
   return (
     <div
@@ -100,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
             fontWeight: 600,
           }}
         >
-          {isInventoryOpen ? "Inventory" : "Properties"}
+          {isItemMapEditorOpen ? "Inventory" : "Properties"}
         </h2>
         <button
           onClick={closeSidebar}
@@ -130,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
       </div>
 
       {/* Inventory Mode */}
-      {isInventoryOpen ? (
+      {isItemMapEditorOpen ? (
         <div style={{ flex: 1 }}>
           <p
             style={{
@@ -148,11 +151,11 @@ const Sidebar: React.FC<SidebarProps> = () => {
               gap: "10px",
             }}
           >
-            {inventoryItems.map((item, index) => (
+            {inventoryItems.map((selectedFixture, index) => (
               <div
                 key={index}
                 draggable
-                onDragStart={(e) => handleDragStart(e, item)}
+                onDragStart={(e) => handleDragStart(e, selectedFixture)}
                 style={{
                   padding: "10px",
                   backgroundColor: "white",
@@ -179,8 +182,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
                 }}
               >
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={selectedFixture.image}
+                  alt={selectedFixture.name}
                   style={{
                     width: "100%",
                     height: "80px",
@@ -188,7 +191,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
                     marginBottom: "6px",
                   }}
                 />
-                {item.name}
+                {selectedFixture.name}
               </div>
             ))}
           </div>
@@ -250,10 +253,38 @@ const Sidebar: React.FC<SidebarProps> = () => {
                 </label>
                 <input
                   type="number"
-                  value={fixturePosition.x}
-                  onChange={(e) =>
-                    handleFixturePositionChange("x", parseFloat(e.target.value))
+                  value={
+                    selectedNode != null ? nodePosition.x : fixturePosition.x
                   }
+                  onChange={(e) => {
+                    const newValue = Number(e.target.value);
+                    if (isNaN(newValue)) return; // Prevent updates with NaN
+
+                    if (selectedNode != null && selectedFixtureId != null) {
+                      // Update the nodePosition state for sidebar display
+                      setNodePosition((prev) => ({ ...prev, x: newValue }));
+
+                      // Update the fixture's points array
+                      setFixtures((prevFixtures) => {
+                        const selectedFixture = prevFixtures[selectedFixtureId];
+                        if (!selectedFixture) return prevFixtures;
+
+                        const relativeX = newValue - selectedFixture.x;
+
+                        return {
+                          ...prevFixtures,
+                          [selectedFixtureId]: {
+                            ...selectedFixture,
+                            points: selectedFixture.points.map((p, i) =>
+                              i === selectedNode * 2 ? relativeX : p
+                            ),
+                          },
+                        };
+                      });
+                    } else {
+                      handleFixturePositionChange("x", newValue);
+                    }
+                  }}
                   style={{
                     width: "100%",
                     padding: "8px 10px",
@@ -278,10 +309,38 @@ const Sidebar: React.FC<SidebarProps> = () => {
                 </label>
                 <input
                   type="number"
-                  value={fixturePosition.y}
-                  onChange={(e) =>
-                    handleFixturePositionChange("y", parseFloat(e.target.value))
+                  value={
+                    selectedNode != null ? nodePosition.y : fixturePosition.y
                   }
+                  onChange={(e) => {
+                    const newValue = Number(e.target.value);
+                    if (isNaN(newValue)) return; // Prevent updates with NaN
+
+                    if (selectedNode != null && selectedFixtureId != null) {
+                      // Update the nodePosition state for sidebar display
+                      setNodePosition((prev) => ({ ...prev, y: newValue }));
+
+                      // Update the fixture's points array
+                      setFixtures((prevFixtures) => {
+                        const selectedFixture = prevFixtures[selectedFixtureId];
+                        if (!selectedFixture) return prevFixtures;
+
+                        const relativeY = newValue - selectedFixture.y;
+
+                        return {
+                          ...prevFixtures,
+                          [selectedFixtureId]: {
+                            ...selectedFixture,
+                            points: selectedFixture.points.map((p, i) =>
+                              i === selectedNode * 2 + 1 ? relativeY : p
+                            ),
+                          },
+                        };
+                      });
+                    } else {
+                      handleFixturePositionChange("y", newValue);
+                    }
+                  }}
                   style={{
                     width: "100%",
                     padding: "8px 10px",
@@ -390,21 +449,18 @@ const Sidebar: React.FC<SidebarProps> = () => {
         }}
       >
         <button
-          onClick={toggleInventoryEditor}
-          disabled={selectedEdge === null && !isInventoryOpen}
+          onClick={toggleEditors}
+          disabled={selectedEdge === null && !isItemMapEditorOpen}
           style={{
             width: "100%",
             padding: "10px 0",
             backgroundColor:
-              selectedEdge === null && !isInventoryOpen
-                ? "#e0e0e0"
-                : "#f0f0f0",
-            color:
-              selectedEdge === null && !isInventoryOpen ? "#999" : "#333",
+              selectedEdge === null && !isItemMapEditorOpen ? "#e0e0e0" : "#f0f0f0",
+            color: selectedEdge === null && !isItemMapEditorOpen ? "#999" : "#333",
             border: "1px solid #ddd",
             borderRadius: "6px",
             cursor:
-              selectedEdge === null && !isInventoryOpen
+              selectedEdge === null && !isItemMapEditorOpen
                 ? "not-allowed"
                 : "pointer",
             fontSize: "14px",
@@ -413,7 +469,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
             transition: "background-color 0.2s",
           }}
         >
-          {isInventoryOpen ? "Edit Properties" : "Open Inventory"}
+          {isItemMapEditorOpen ? "Open Layout Editor" : "Open Item Map Editor"}
         </button>
       </div>
     </div>

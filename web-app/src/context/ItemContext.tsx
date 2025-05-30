@@ -1,8 +1,19 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
 import { loadItemMap } from "../utils/LoadLocal";
 import Item from "../types/Item";
 import { v4 as uuidv4 } from "uuid";
 
+/**
+ * ItemContext manages the complex grid system and item placement.
+ * Implements a 2D grid structure: edge → row → column → items array
+ * Handles drag-and-drop operations between shelves and inventory sidebar.
+ */
+
+/**
+ * Represents the state of an item being dragged
+ * Tracks source location for move operations
+ * @interface DraggingState
+ */
 interface DraggingState {
   edge: string;
   row: number;
@@ -10,30 +21,34 @@ interface DraggingState {
   index: number;
 }
 
-interface ItemContextProps {
+/**
+ * Context interface for item management operations
+ * @interface ItemContextType
+ */
+interface ItemContextType {
   itemMap: Record<string, Item[][][]>;
   setItemMap: React.Dispatch<React.SetStateAction<Record<string, Item[][][]>>>;
   dragging: DraggingState | null;
   setDragging: React.Dispatch<React.SetStateAction<DraggingState | null>>;
   handleDragStart: (
+    e: React.DragEvent,
     edge: string,
     rowIndex: number,
     colIndex: number,
-    itemIndex: number,
-    event: React.DragEvent
+    itemIndex: number
   ) => void;
   handleDropOnCell: (
-    event: React.DragEvent<HTMLDivElement>,
+    e: React.DragEvent<HTMLDivElement>,
     edge: string,
     rowIndex: number,
     colIndex: number
   ) => void;
   handleRemoveItem: (
+    e: React.MouseEvent,
     edge: string,
     rowIndex: number,
     colIndex: number,
-    itemIndex: number,
-    e: React.MouseEvent
+    itemIndex: number
   ) => void;
   handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   addRow: (edge: string) => void;
@@ -42,7 +57,7 @@ interface ItemContextProps {
   removeColumn: (edge: string, rowIndex: number, colIndex: number) => void;
 }
 
-export const ItemContext = createContext<ItemContextProps | undefined>(
+export const ItemContext = createContext<ItemContextType | undefined>(
   undefined
 );
 
@@ -57,18 +72,21 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [dragging, setDragging] = useState<DraggingState | null>(null);
 
-  // Save to localStorage whenever itemMap changes
-  useEffect(() => {
-    console.log("Item map updated:", itemMap);
-    // You could add localStorage saving logic here if needed
-  }, [itemMap]);
-
+  /**
+   * Initiates drag operation for an existing grid item
+   * Sets up drag state and data transfer for drop handling
+   * @param e - Drag event
+   * @param edge - Edge number of the fixture the item is dragged from
+   * @param rowIndex - Row index of the cell the item dragged from
+   * @param colIndex - Column index of the cell the item dragged from
+   * @param itemIndex - The index (order) of the item before being dragged
+   */
   const handleDragStart = (
+    e: React.DragEvent,
     edge: string,
     rowIndex: number,
     colIndex: number,
-    itemIndex: number,
-    event: React.DragEvent
+    itemIndex: number
   ) => {
     console.log("Setting dragging state:", {
       edge,
@@ -76,29 +94,39 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
       colIndex,
       itemIndex,
     });
+
     setDragging({ edge, row: rowIndex, col: colIndex, index: itemIndex });
 
     // Store source info in dataTransfer
-    event.dataTransfer.setData("source", "grid");
+    e.dataTransfer.setData("source", "grid");
     const draggingInfo = { edge, rowIndex, colIndex, itemIndex };
-    event.dataTransfer.setData("dragging-info", JSON.stringify(draggingInfo));
+    e.dataTransfer.setData("dragging-info", JSON.stringify(draggingInfo));
 
     // For debugging
     console.log("Drag started with info:", draggingInfo);
   };
 
+  /**
+   * Processes item drops onto grid cells
+   * Handles both new items from sidebar and existing item moves
+   * Maintains proper grid structure and item indexing
+   * @param e - Drag event
+   * @param edge - Edge number of the fixture the item is dropped on
+   * @param rowIndex - Row index of the cell the item dropped to
+   * @param colIndex - Column index of the cell the item dropped to
+   */
   const handleDropOnCell = (
-    event: React.DragEvent<HTMLDivElement>,
+    e: React.DragEvent<HTMLDivElement>,
     edge: string,
     rowIndex: number,
     colIndex: number
   ) => {
-    event.preventDefault();
+    e.preventDefault();
     console.log("Drop received on cell:", { edge, rowIndex, colIndex });
 
-    // Check data transfer sources
-    const source = event.dataTransfer.getData("source");
-    const jsonData = event.dataTransfer.getData("application/json");
+    // Determine drag source: sidebar (new item) or grid (existing grid item move)
+    const source = e.dataTransfer.getData("source");
+    const jsonData = e.dataTransfer.getData("application/json");
 
     console.log("Drop data sources:", {
       source,
@@ -110,7 +138,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
       // Create a deep copy to ensure immutability
       const newMap = JSON.parse(JSON.stringify(prevMap));
 
-      // Initialize shelf structure if not present
+      // Initialize grid structure if not present
       if (!newMap[edge]) {
         newMap[edge] = Array.from({ length: 3 }, () =>
           Array.from({ length: 1 }, () => [])
@@ -129,7 +157,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
       const targetCell = newMap[edge][rowIndex][colIndex];
 
       try {
-        // Case 1: Item from sidebar (new item)
+        // Case 1: Adding new item from sidebar inventory
         if (jsonData && source === "sidebar") {
           console.log("Adding new item from sidebar");
           const newItem: Item = JSON.parse(jsonData);
@@ -147,7 +175,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
           console.log("New item added:", newItemWithMeta);
         }
 
-        // Case 2: Moving existing item
+        // Case 2: Moving existing item between shelf locations
         else if (dragging !== null) {
           console.log("Moving existing item", dragging);
 
@@ -193,12 +221,21 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  /**
+   * Processes item delete in grid cells
+   * Maintains proper item indexing
+   * @param e - Mouse event
+   * @param edge - Edge number of the fixture the cell item is on
+   * @param rowIndex - Row index of the cell item is on
+   * @param colIndex - Column index of the cell item is on
+   * @param itemIndex - Index (order) of the item within the cell
+   */
   const handleRemoveItem = (
+    e: React.MouseEvent,
     edge: string,
     rowIndex: number,
     colIndex: number,
-    itemIndex: number,
-    e: React.MouseEvent
+    itemIndex: number
   ) => {
     console.log("Removing item:", { edge, rowIndex, colIndex, itemIndex });
     e.stopPropagation();
@@ -229,6 +266,11 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
     e.dataTransfer.dropEffect = "move";
   };
 
+  /**
+   * Dynamically adds a new row to the specified edge
+   * Initializes with one empty column for immediate use
+   * @param edge - Egde number of the fixture the row is added
+   */
   const addRow = (edge: string) => {
     setItemMap((prevMap) => {
       const newMap = { ...prevMap };
@@ -243,6 +285,11 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  /**
+   * Dynamically adds a new column to the specified row
+   * @param edge - Egde number of the fixture the column is added
+   * @param rowIndex - Index of the row the column is added
+   */
   const addColumn = (edge: string, rowIndex: number) => {
     setItemMap((prevMap) => {
       const newMap = { ...prevMap };
@@ -257,6 +304,11 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  /**
+   * Dynamically removes a row from the specified edge
+   * @param edge - Egde number of the fixture the row is removed
+   * @param rowIndex - Index of the row
+   */
   const removeRow = (edge: string, rowIndex: number) => {
     setItemMap((prevMap) => {
       const newMap = { ...prevMap };
@@ -271,6 +323,12 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  /**
+   * Dynamically removes a column from the specified row
+   * @param edge - Egde number of the fixture the column is removed
+   * @param rowIndex - Index of the row the column is removed
+   * @param colIndex - Index of the column
+   */
   const removeColumn = (edge: string, rowIndex: number, colIndex: number) => {
     setItemMap((prevMap) => {
       const newMap = { ...prevMap };

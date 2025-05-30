@@ -3,6 +3,26 @@ import { useItemContext } from "../../hooks/useItemContext";
 import { Trash2 } from "lucide-react";
 import Item from "../../types/Item";
 
+/**
+ * ItemContainer - Grid-Based Item Organization Component
+ *
+ * Provides a dynamic grid interface for organizing items within fixture edges.
+ * Supports drag-and-drop operations, grid manipulation, and cell selection.
+ *
+ * Features:
+ * - Dynamic row/column management
+ * - Drag-and-drop item organization
+ * - Cell selection and highlighting
+ * - Item removal functionality
+ *
+ * @component
+ * @param {ItemContainerProps} props - Component props
+ */
+
+/**
+ * Interface for item container properties
+ * @interface ItemContainerProps
+ */
 interface ItemContainerProps {
   rows?: number;
   cols?: number;
@@ -19,6 +39,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
     handleDropOnCell,
     handleDragStart,
     dragging,
+    setDragging,
     handleRemoveItem,
     handleDragOver,
     addRow,
@@ -32,75 +53,77 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
     col: number;
   } | null>(null);
 
-  // Get the items for this edge, or create an empty structure if not found
+  // Get items for this edge or create empty grid structure
   const cells =
     itemMap[edge] ||
     Array.from({ length: rows }, () => Array.from({ length: cols }, () => []));
 
   return (
     <div style={{ width: "100%" }}>
-      {/* === Grid Controls Section === */}
+      {/* Grid control buttons section */}
       <div
-  style={{
-    display: "flex",
-    gap: "12px",
-    flexWrap: "wrap",
-    marginBottom: "20px",
-  }}
->
-  {[
-    { label: "Add Row", onClick: () => addRow(edge), disabled: false },
-    {
-      label: "Add Column",
-      onClick: () => selectedCell && addColumn(edge, selectedCell.row),
-      disabled: !selectedCell,
-    },
-    {
-      label: "Remove Row",
-      onClick: () => selectedCell && removeRow(edge, selectedCell.row),
-      disabled: !selectedCell,
-    },
-    {
-      label: "Remove Column",
-      onClick: () =>
-        selectedCell &&
-        removeColumn(edge, selectedCell.row, selectedCell.col),
-      disabled: !selectedCell,
-    },
-  ].map((btn, index) => (
-    <button
-      key={index}
-      onClick={btn.onClick}
-      disabled={btn.disabled}
-      style={{
-        padding: "10px 16px",
-        borderRadius: "8px",
-        border: "none",
-        backgroundColor: btn.disabled ? "#e0e0e0" : "#4A90E2",
-        color: btn.disabled ? "#9e9e9e" : "#fff",
-        fontWeight: 500,
-        fontSize: "14px",
-        cursor: btn.disabled ? "not-allowed" : "pointer",
-        transition: "background-color 0.2s, transform 0.2s",
-        boxShadow: btn.disabled ? "none" : "0 2px 6px rgba(0,0,0,0.1)",
-      }}
-      onMouseEnter={(e) => {
-        if (!btn.disabled) e.currentTarget.style.backgroundColor = "#357ABD";
-      }}
-      onMouseLeave={(e) => {
-        if (!btn.disabled) e.currentTarget.style.backgroundColor = "#4A90E2";
-      }}
-      onMouseDown={(e) => {
-        if (!btn.disabled) e.currentTarget.style.transform = "scale(0.97)";
-      }}
-      onMouseUp={(e) => {
-        if (!btn.disabled) e.currentTarget.style.transform = "scale(1)";
-      }}
-    >
-      {btn.label}
-    </button>
-  ))}
-</div>
+        style={{
+          display: "flex",
+          gap: "12px",
+          flexWrap: "wrap",
+          marginBottom: "20px",
+        }}
+      >
+        {[
+          { label: "Add Row", onClick: () => addRow(edge), disabled: false },
+          {
+            label: "Add Column",
+            onClick: () => selectedCell && addColumn(edge, selectedCell.row),
+            disabled: !selectedCell,
+          },
+          {
+            label: "Remove Row",
+            onClick: () => selectedCell && removeRow(edge, selectedCell.row),
+            disabled: !selectedCell,
+          },
+          {
+            label: "Remove Column",
+            onClick: () =>
+              selectedCell &&
+              removeColumn(edge, selectedCell.row, selectedCell.col),
+            disabled: !selectedCell,
+          },
+        ].map((btn, index) => (
+          <button
+            key={index}
+            onClick={btn.onClick}
+            disabled={btn.disabled}
+            style={{
+              padding: "10px 16px",
+              borderRadius: "8px",
+              border: "none",
+              backgroundColor: btn.disabled
+                ? "rgb(224, 224, 224)"
+                : "rgb(3, 160, 222)",
+              color: btn.disabled ? "#9e9e9e" : "#fff",
+              fontWeight: 500,
+              fontSize: "14px",
+              cursor: btn.disabled ? "not-allowed" : "pointer",
+              transition: "background-color 0.2s, transform 0.2s",
+              boxShadow: btn.disabled ? "none" : "0 2px 6px rgba(0,0,0,0.1)",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = btn.disabled
+                ? "rgb(224, 224, 224)"
+                : "rgb(2, 141, 196)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = btn.disabled
+                ? "rgb(224, 224, 224)"
+                : "rgb(3, 160, 222)";
+            }}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main grid container with dynamic row sizing */}
       <div
         style={{
           display: "grid",
@@ -108,9 +131,10 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
           gap: "16px",
         }}
       >
-       {cells.map((row, rowIndex) => (
+        {/* Row iteration with flex layout for columns */}
+        {cells.map((row, rowIndex) => (
           <div key={rowIndex} style={{ display: "flex", gap: "16px" }}>
-           {row.map((_, colIndex) => {
+            {row.map((_, colIndex) => {
               const isSelected =
                 selectedCell?.row === rowIndex &&
                 selectedCell?.col === colIndex;
@@ -118,6 +142,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
               const cellItems = cells[rowIndex]?.[colIndex] || [];
 
               return (
+                // Individual cell with selection highlighting
                 <div
                   key={colIndex}
                   onClick={() =>
@@ -125,7 +150,11 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                   }
                   style={{
                     width: "100%",
-                    backgroundColor: isSelected ? "#e6f7ff" : "#ffffff",
+                    backgroundColor: dragging
+                      ? "rgba(108, 255, 67, 0.34)"
+                      : isSelected
+                      ? "rgba(1, 221, 255, 0.15)"
+                      : "rgb(255, 255, 255)",
                     color: "#333",
                     borderRadius: "8px",
                     cursor: "pointer",
@@ -134,12 +163,15 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    border: `1px solid ${isSelected ? "#1890ff" : "#e8e8e8"}`,
+                    border: `1px solid ${
+                      dragging? "rgb(63, 218, 20)" : isSelected ? "rgb(1, 221, 255)" : "rgba(0, 0, 0, 0.19)"
+                    }`,
                     flexDirection: "column",
                     padding: "16px",
                     transition: "all 0.2s ease-in-out",
                   }}
                 >
+                  {/* Drop zone for drag-and-drop operations */}
                   <div
                     onDragOver={handleDragOver}
                     onDrop={(e) => {
@@ -159,8 +191,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                       justifyContent: "flex-start", // Align items to the start
                       padding: "12px",
                       borderRadius: "6px",
-                      backgroundColor: dragging ? "#f0f7ff" : "#f9f9f9",
-                      border: `1px dashed ${dragging ? "#1890ff" : "#d9d9d9"}`,
+                      backgroundColor: "transparent",
                       transition: "all 0.2s",
                       overflowX: "auto", // Allow horizontal scrolling if needed
                     }}
@@ -169,6 +200,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                   >
                     {cellItems.length > 0 ? (
                       cellItems.map((item: Item, itemIndex: number) => (
+                        // Individual item rendering with drag capabilities
                         <div
                           key={`${item.id}_${itemIndex}`}
                           draggable
@@ -181,13 +213,14 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                               id: item.id,
                             });
                             handleDragStart(
+                              e,
                               edge,
                               rowIndex,
                               colIndex,
-                              itemIndex,
-                              e
+                              itemIndex
                             );
                           }}
+                          onDragEnd={() => setDragging(null)}
                           style={{
                             display: "flex",
                             alignItems: "center",
@@ -234,11 +267,11 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                             size={16}
                             onClick={(e) =>
                               handleRemoveItem(
+                                e,
                                 edge,
                                 rowIndex,
                                 colIndex,
-                                itemIndex,
-                                e
+                                itemIndex
                               )
                             }
                             style={{ cursor: "pointer", flexShrink: 0 }}
