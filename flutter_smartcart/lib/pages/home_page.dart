@@ -29,12 +29,18 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamed(context, '/product-list');
               },
-            ),
-            _buildHomeCard(
+            ),            _buildHomeCard(
               icon: Icons.shopping_cart,
               label: 'My Cart',
               onTap: () {
                 Navigator.pushNamed(context, '/cart');
+              },
+            ),
+            _buildHomeCard(
+              icon: Icons.map,
+              label: 'Store Layout',
+              onTap: () {
+                Navigator.pushNamed(context, '/store-layout');
               },
             ),
             _buildHomeCard(

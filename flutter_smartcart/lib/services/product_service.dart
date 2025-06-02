@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/product_dto.dart';
 
 class ProductService {
-  final String baseUrl = 'http://10.0.2.2:3000'; // Or your IP if on real device
+  final String baseUrl = 'http://localhost:3000'; // Or your IP if on real device
 
   Future<List<ProductDTO>> fetchAllProducts() async {
     try {

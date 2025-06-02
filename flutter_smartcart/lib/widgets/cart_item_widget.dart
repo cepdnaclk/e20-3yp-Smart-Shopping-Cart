@@ -11,7 +11,7 @@ class CartItemWidget extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
-        title: Text(cartItem.productName),
+        title: Text(cartItem.name),
         subtitle: Text("Quantity: ${cartItem.quantity}"),
         trailing: Text("Rs. ${cartItem.price * cartItem.quantity}"),
       ),

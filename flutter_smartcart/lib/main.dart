@@ -6,7 +6,8 @@ import 'pages/cart_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/product_detail_page.dart';
 import 'pages/product_list_page.dart';
-import 'models/product_dto.dart'; // ✅ Make sure to import ProductDTO
+import 'models/product_dto.dart';
+import 'screens/store_layout_screen.dart';
 
 void main() {
   runApp(const SmartCartApp());
@@ -52,10 +53,11 @@ class SmartCartApp extends StatelessWidget {
                       body: Center(child: Text('No product data provided')),
                     ),
               );
-            }
-            return MaterialPageRoute(
+            }            return MaterialPageRoute(
               builder: (_) => ProductDetailPage(product: product),
             );
+          case '/store-layout':
+            return MaterialPageRoute(builder: (_) => const StoreLayoutScreen());
           default:
             return MaterialPageRoute(
               builder:

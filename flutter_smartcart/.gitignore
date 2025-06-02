@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Sensitive files
+config/emqx.env
+config/*.crt
+assets/config/emqx.env
+assets/config/*.crt
+

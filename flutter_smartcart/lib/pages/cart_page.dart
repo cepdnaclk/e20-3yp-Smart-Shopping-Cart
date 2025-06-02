@@ -9,11 +9,10 @@ class CartPage extends StatefulWidget {
   State<CartPage> createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage> {
-  // Dummy data for now
+class _CartPageState extends State<CartPage> {  // Dummy data for now
   List<CartDTO> cartItems = [
-    CartDTO(productName: "Apple", quantity: 2, price: 100.0),
-    CartDTO(productName: "Bread", quantity: 1, price: 150.0),
+    CartDTO(id: 1, name: "Apple", quantity: 2, price: 100.0),
+    CartDTO(id: 2, name: "Bread", quantity: 1, price: 150.0),
   ];
 
   double get totalAmount {
