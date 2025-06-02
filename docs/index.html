@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Shopping Cart Project</title>
+  <style>
+    /* Reset & base */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f9fafb;
+      color: #222;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      scroll-behavior: smooth;
+    }
+    header {
+      background: #2a9d8f;
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      letter-spacing: 1.5px;
+    }
+    header p {
+      font-size: 1.25rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Problem Statement Section */
+    #problem-statement {
+      background: #fce8e6;
+      padding: 50px 20px;
+      max-width: 900px;
+      margin: 40px auto;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(255,100,80,0.2);
+      text-align: center;
+    }
+    #problem-statement h2 {
+      color: #d72631;
+      font-size: 2.5rem;
+      margin-bottom: 25px;
+      letter-spacing: 1.1px;
+    }
+    #problem-statement p {
+      font-size: 1.2rem;
+      color: #7a2a2a;
+      max-width: 700px;
+      margin: 0 auto 35px;
+      line-height: 1.5;
+    }
+    #problem-images {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+    #problem-images img {
+      width: 280px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(215,45,45,0.3);
+      object-fit: cover;
+      height: 180px;
+      transition: transform 0.3s ease;
+      cursor: default;
+    }
+    #problem-images img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(215,45,45,0.5);
+    }
+
+    /* Introduction Section */
+    #introduction {
+      background:#e0f2f1; 
+      padding: 60px 20px; 
+      text-align: center; 
+      display: flex; 
+      flex-wrap: wrap; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 40px;
+    }
+    #introduction > div {
+      flex: 1 1 350px; 
+      max-width: 450px;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+    #introduction h2 {
+      font-size: 2.8rem; 
+      color: #00796b; 
+      margin-bottom: 20px; 
+      letter-spacing: 1.2px;
+    }
+    #introduction p {
+      font-size: 1.15rem; 
+      color: #004d40; 
+      line-height: 1.5; 
+      margin-bottom: 30px;
+    }
+    #introduction button {
+      background: #00796b; 
+      color: white; 
+      border: none; 
+      padding: 15px 40px; 
+      font-size: 1.1rem; 
+      border-radius: 30px; 
+      cursor: pointer; 
+      box-shadow: 0 6px 20px rgba(0,121,107,0.6); 
+      transition: background-color 0.3s ease;
+    }
+    #introduction button:hover {
+      background: #004d40;
+      box-shadow: 0 8px 25px rgba(0,77,64,0.7);
+    }
+    #introduction img {
+      width: 100%; 
+      border-radius: 20px; 
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    /* Animations for intro */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeInRight {
+      0% {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    #introduction > div:nth-child(1) {
+      animation: fadeInUp 1s ease forwards;
+    }
+    #introduction > div:nth-child(2) {
+      animation: fadeInRight 1s ease forwards;
+      animation-delay: 0.3s;
+    }
+
+    /* Main Features Section */
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h2 {
+      color: #264653;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+    }
+    .feature-item {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      padding: 25px;
+      flex: 1 1 250px;
+      max-width: 280px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+    .feature-item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .feature-item:nth-child(1) { animation-delay: 0.1s; }
+    .feature-item:nth-child(2) { animation-delay: 0.3s; }
+    .feature-item:nth-child(3) { animation-delay: 0.5s; }
+    .feature-item:nth-child(4) { animation-delay: 0.7s; }
+
+    .feature-icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+      color: #2a9d8f;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .feature-title {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #264653;
+    }
+    .feature-desc {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    /* Use inline SVG icons for crispness */
+    .icon-cart svg, .icon-chart svg, .icon-map svg, .icon-lock svg {
+      width: 48px;
+      height: 48px;
+      fill: #2a9d8f;
+      margin-bottom: 15px;
+    }
+
+    .cta {
+      text-align: center;
+      margin: 50px 0;
+    }
+    .btn-primary {
+      background: #e76f51;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 15px rgba(231,111,81,0.4);
+    }
+    .btn-primary:hover {
+      background: #d65a3a;
+      box-shadow: 0 6px 20px rgba(214,90,58,0.6);
+    }
+    footer {
+      background: #264653;
+      color: white;
+      text-align: center;
+      padding: 15px 10px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .features {
+        flex-direction: column;
+        align-items: center;
+      }
+      #introduction {
+        flex-direction: column;
+      }
+      #problem-images {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Smart Shopping Cart</h1>
+    <p>Revolutionizing the shopping experience with real-time tracking, optimized navigation, and seamless checkout.</p>
+  </header>
+
+  <!-- Problem Statement Section -->
+  <section id="problem-statement">
+    <h2>Problem Statement</h2>
+    <p>
+      Long checkout queues, difficulty in tracking spending during shopping, and inefficiency in navigating stores to locate items — customers lack a seamless way to view their complete bill in real-time.
+    </p>
+    <div id="problem-images">
+      <img src="https://images.unsplash.com/photo-1511447333010-20e70b9149b1?auto=format&fit=crop&w=600&q=80" alt="Long Checkout Queue" title="Long Checkout Queues" />
+      <img src="https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=600&q=80" alt="Difficulty Tracking Spending" title="Difficulty Tracking Spending" />
+      <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=600&q=80" alt="Inefficient Store Navigation" title="Inefficient Store Navigation" />
+    </div>
+  </section>
+
+  <!-- Introduction Section -->
+  <section id="introduction">
+    <div>
+      <h2>About Our Project</h2>
+      <p>
+        Our smart shopping cart addresses these challenges by integrating barcode scanning for accurate item recognition, real-time billing for transparent spending, and optimized navigation for a smooth shopping journey.
+      </p>
+      <button onclick="alert('Get Started feature coming soon!')">Get Started</button>
+    </div>
+    <div>
+      <img src="https://images.unsplash.com/photo-1585238342028-88a04e78b84b?auto=format&fit=crop&w=600&q=80" alt="Smart Shopping Cart Illustration" />
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <main>
+    <h2>Key Features</h2>
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon icon-cart">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14.26l.03-.13L9 5h10V3H8.21l-.94-2H2v2h2l3.6 7.59-1.35 2.44c-.14.25-.21.54-.21.84 0 .83.67 1.5 1.5 1.5h12v-2H7.16z"/></svg>
+        </div>
+        <div class="feature-title">Integrated Barcode Scanning</div>
+        <div class="feature-desc">
+          Quickly and accurately scan items with integrated barcode scanners.
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon icon-chart">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 17h2v-7H4v7zm4 0h2V7H8v10zm4 0h2v-4h-2v4zm4 0h2v-10h-2v10z"/></svg>
+        </div>
+        <div class="feature-title">Real-time Billing</div>
+        <div class="feature-desc">
+          Track your spending as you shop with an up-to-date bill that adjusts as you add or remove items.
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon icon-map">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2l-6 2-4-2-6 2v18l6-2 4 2 6-2V2zm-10 15l-4-2V5l4 2v10zm2-9l4-2v10l-4 2V8z"/></svg>
+        </div>
+        <div class="feature-title">Optimized Navigation</div>
+        <div class="feature-desc">
+          Get the shortest path to collect all items on your shopping list, saving time and effort.
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon icon-lock">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2zM8 7a4 4 0 018 0v3H8V7z"/></svg>
+        </div>
+        <div class="feature-title">Secure Checkout</div>
+        <div class="feature-desc">
+          Restrict cart movement until payment confirmation, ensuring a safe and seamless checkout process.
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <button class="btn-primary" onclick="alert('Checkout feature coming soon!')">Learn More</button>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Smart Shopping Cart Project. All rights reserved.
+  </footer>
+
+</body>
+</html>
