@@ -1,356 +1,937 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Smart Shopping Cart Project</title>
-  <style>
-    /* Reset & base */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      background: #f9fafb;
-      color: #222;
-      line-height: 1.6;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      scroll-behavior: smooth;
-    }
-    header {
-      background: #2a9d8f;
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    header h1 {
-      font-size: 2.8rem;
-      margin-bottom: 10px;
-      letter-spacing: 1.5px;
-    }
-    header p {
-      font-size: 1.25rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCart - Revolutionary Shopping Experience</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* Problem Statement Section */
-    #problem-statement {
-      background: #fce8e6;
-      padding: 50px 20px;
-      max-width: 900px;
-      margin: 40px auto;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(255,100,80,0.2);
-      text-align: center;
-    }
-    #problem-statement h2 {
-      color: #d72631;
-      font-size: 2.5rem;
-      margin-bottom: 25px;
-      letter-spacing: 1.1px;
-    }
-    #problem-statement p {
-      font-size: 1.2rem;
-      color: #7a2a2a;
-      max-width: 700px;
-      margin: 0 auto 35px;
-      line-height: 1.5;
-    }
-    #problem-images {
-      display: flex;
-      justify-content: center;
-      gap: 25px;
-      flex-wrap: wrap;
-    }
-    #problem-images img {
-      width: 280px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(215,45,45,0.3);
-      object-fit: cover;
-      height: 180px;
-      transition: transform 0.3s ease;
-      cursor: default;
-    }
-    #problem-images img:hover {
-      transform: scale(1.05);
-      box-shadow: 0 12px 30px rgba(215,45,45,0.5);
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
 
-    /* Introduction Section */
-    #introduction {
-      background:#e0f2f1; 
-      padding: 60px 20px; 
-      text-align: center; 
-      display: flex; 
-      flex-wrap: wrap; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 40px;
-    }
-    #introduction > div {
-      flex: 1 1 350px; 
-      max-width: 450px;
-      opacity: 0;
-      animation-fill-mode: forwards;
-    }
-    #introduction h2 {
-      font-size: 2.8rem; 
-      color: #00796b; 
-      margin-bottom: 20px; 
-      letter-spacing: 1.2px;
-    }
-    #introduction p {
-      font-size: 1.15rem; 
-      color: #004d40; 
-      line-height: 1.5; 
-      margin-bottom: 30px;
-    }
-    #introduction button {
-      background: #00796b; 
-      color: white; 
-      border: none; 
-      padding: 15px 40px; 
-      font-size: 1.1rem; 
-      border-radius: 30px; 
-      cursor: pointer; 
-      box-shadow: 0 6px 20px rgba(0,121,107,0.6); 
-      transition: background-color 0.3s ease;
-    }
-    #introduction button:hover {
-      background: #004d40;
-      box-shadow: 0 8px 25px rgba(0,77,64,0.7);
-    }
-    #introduction img {
-      width: 100%; 
-      border-radius: 20px; 
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, #2196f3, #4caf50, #00bcd4, #009688);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
 
-    /* Animations for intro */
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    @keyframes fadeInRight {
-      0% {
-        opacity: 0;
-        transform: translateX(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-    #introduction > div:nth-child(1) {
-      animation: fadeInUp 1s ease forwards;
-    }
-    #introduction > div:nth-child(2) {
-      animation: fadeInRight 1s ease forwards;
-      animation-delay: 0.3s;
-    }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-    /* Main Features Section */
-    main {
-      flex: 1;
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    h2 {
-      color: #264653;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2rem;
-    }
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      justify-content: center;
-    }
-    .feature-item {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      padding: 25px;
-      flex: 1 1 250px;
-      max-width: 280px;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: default;
-      opacity: 0;
-      animation: fadeInUp 0.8s ease forwards;
-    }
-    .feature-item:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
-    .feature-item:nth-child(1) { animation-delay: 0.1s; }
-    .feature-item:nth-child(2) { animation-delay: 0.3s; }
-    .feature-item:nth-child(3) { animation-delay: 0.5s; }
-    .feature-item:nth-child(4) { animation-delay: 0.7s; }
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
 
-    .feature-icon {
-      font-size: 50px;
-      margin-bottom: 15px;
-      color: #2a9d8f;
-      height: 60px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .feature-title {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-      font-weight: 600;
-      color: #264653;
-    }
-    .feature-desc {
-      font-size: 1rem;
-      color: #555;
-    }
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Use inline SVG icons for crispness */
-    .icon-cart svg, .icon-chart svg, .icon-map svg, .icon-lock svg {
-      width: 48px;
-      height: 48px;
-      fill: #2a9d8f;
-      margin-bottom: 15px;
-    }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
 
-    .cta {
-      text-align: center;
-      margin: 50px 0;
-    }
-    .btn-primary {
-      background: #e76f51;
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      font-size: 1.2rem;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 4px 15px rgba(231,111,81,0.4);
-    }
-    .btn-primary:hover {
-      background: #d65a3a;
-      box-shadow: 0 6px 20px rgba(214,90,58,0.6);
-    }
-    footer {
-      background: #264653;
-      color: white;
-      text-align: center;
-      padding: 15px 10px;
-      font-size: 0.9rem;
-    }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
 
-    @media (max-width: 600px) {
-      .features {
-        flex-direction: column;
-        align-items: center;
-      }
-      #introduction {
-        flex-direction: column;
-      }
-      #problem-images {
-        justify-content: center;
-      }
+        nav.scrolled .logo {
+            color: #333;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav.scrolled .nav-links a {
+            color: #333;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4caf50;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: slideUp 1s ease 0.5s forwards;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: slideUp 1s ease 0.7s forwards;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #4caf50, #2196f3);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: slideUp 1s ease 0.9s forwards;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.6);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Floating Cart Animation */
+        .floating-cart {
+            position: absolute;
+            right: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8rem;
+            color: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(-50%) rotate(0deg); }
+            50% { transform: translateY(-60%) rotate(5deg); }
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, #e50a49, #4caf50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Problem Statement */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .problem-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .problem-icon {
+            font-size: 3rem;
+            color: #2196f3;
+            margin-bottom: 1rem;
+        }
+
+        /* Solutions */
+        .solutions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .solution-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(45deg, #2196f3, #4caf50);
+        }
+
+        .solution-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+
+
+        .arch-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .arch-component {
+            background: linear-gradient(45deg, #2196f3, #4caf50);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            min-width: 150px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .arch-component:hover {
+            transform: scale(1.05);
+        }
+
+        .arch-arrow {
+            font-size: 2rem;
+            color: #2196f3;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+/* Architecture Image Section */
+        .architecture-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .architecture-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .architecture-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .architecture-description {
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+
+        /* Hardware Pricing Table */
+.hardware-pricing {
+    margin-top: 3rem;
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.hardware-pricing h3 {
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.pricing-table {
+    overflow-x: auto;
+}
+
+.pricing-table table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-table th {
+    background: linear-gradient(45deg, #2196f3, #4caf50);
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.pricing-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s ease;
+}
+
+.pricing-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.pricing-table .total-row {
+    background: linear-gradient(45deg, rgba(33, 150, 243, 0.1), rgba(76, 175, 80, 0.1));
+    font-weight: bold;
+}
+
+.pricing-table .total-row:hover {
+    background: linear-gradient(45deg, rgba(33, 150, 243, 0.15), rgba(76, 175, 80, 0.15)) !important;
+}
+
+.pricing-table th:first-child,
+.pricing-table td:first-child {
+    padding-left: 1.5rem;
+}
+
+.pricing-table th:last-child,
+.pricing-table td:last-child {
+    padding-right: 1.5rem;
+    text-align: right;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+    .pricing-table {
+        font-size: 0.9rem;
     }
-  </style>
+    
+    .pricing-table th,
+    .pricing-table td {
+        padding: 0.8rem 0.5rem;
+    }
+    
+    .hardware-pricing {
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+}
+
+        /* Hardware & Software */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 2rem 0;
+        }
+
+        .tech-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .tech-list {
+            list-style: none;
+        }
+
+        .tech-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .tech-list li:hover {
+            background: #f8f9fa;
+            padding-left: 1rem;
+        }
+
+        .tech-list i {
+            color: #2196f3;
+            margin-right: 1rem;
+            width: 20px;
+        }
+
+* Design Grid - Updated for 2x2 layout */
+        .design-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .design-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .design-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .design-image-container {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        .design-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .design-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Team */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-member::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #2196f3, #4caf50);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .team-member:hover::before {
+            opacity: 0.1;
+        }
+
+        .team-avatar img {
+    width: 100%;
+    height: auto;
+    object-fit: contain; /* or 'cover' if you want a zoomed-in crop */
+    border-radius: 50%; /* optional for circular images */
+}
+
+
+        /* Links */
+        .links-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .link-button {
+            background: linear-gradient(45deg, #2196f3, #4caf50);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .link-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-cart {
+                display: none;
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(45deg, #4caf50, #2196f3);
+            z-index: 1001;
+            transition: width 0.3s ease;
+        }
+    </style>
 </head>
 <body>
+    <div class="bg-animation"></div>
+    <div class="scroll-indicator"></div>
+    
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo"><i class="fas fa-shopping-cart"></i> SmartCart</a>
+            <ul class="nav-links">
+                <li><a href="#intro">Introduction</a></li>
+                <li><a href="#problem">Problem</a></li>
+                <li><a href="#solutions">Solutions</a></li>
+                <li><a href="#budget">Budget</a></li>
+                <li><a href="#tech">Technology</a></li>
+                <li><a href="#team">Team</a></li>
+                <li><a href="#links">Links</a></li>
+            </ul>
+        </div>
+    </nav>
 
-  <header>
-    <h1>Smart Shopping Cart</h1>
-    <p>Revolutionizing the shopping experience with real-time tracking, optimized navigation, and seamless checkout.</p>
-  </header>
+    <section class="hero" id="intro">
+        <div class="hero-content">
+            <h1>SmartCart Revolution</h1>
+            <p>Transforming Shopping Experience with  IoT</p>
+            <a href="#problem" class="cta-button">Explore Innovation <i class="fas fa-arrow-down"></i></a>
+        </div>
+        <div class="floating-cart">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+    </section>
 
-  <!-- Problem Statement Section -->
-  <section id="problem-statement">
-    <h2>Problem Statement</h2>
-    <p>
-      Long checkout queues, difficulty in tracking spending during shopping, and inefficiency in navigating stores to locate items — customers lack a seamless way to view their complete bill in real-time.
-    </p>
-    <div id="problem-images">
-      <img src="https://images.unsplash.com/photo-1511447333010-20e70b9149b1?auto=format&fit=crop&w=600&q=80" alt="Long Checkout Queue" title="Long Checkout Queues" />
-      <img src="https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=600&q=80" alt="Difficulty Tracking Spending" title="Difficulty Tracking Spending" />
-      <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=600&q=80" alt="Inefficient Store Navigation" title="Inefficient Store Navigation" />
-    </div>
-  </section>
+    <section class="section" id="problem">
+        <h2>Problem Statement</h2>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <div class="problem-icon"><i class="fas fa-clock"></i></div>
+                <h3>Long Checkout Queues</h3>
+                <p>Customers waste precious time waiting in long checkout lines, leading to frustration and reduced shopping satisfaction.</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon"><i class="fas fa-calculator"></i></div>
+                <h3>Manual Price Calculation</h3>
+                <p>Traditional shopping requires manual tracking of items and prices, making budget management difficult.</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon"><i class="fas fa-user-times"></i></div>
+                <h3>Customer Frustration</h3>
+                <p>Customers gets frustrated by finding the items in large stores.</p>
+            </div>
+                    </div>
+    </section>
 
-  <!-- Introduction Section -->
-  <section id="introduction">
-    <div>
-      <h2>About Our Project</h2>
-      <p>
-        Our smart shopping cart addresses these challenges by integrating barcode scanning for accurate item recognition, real-time billing for transparent spending, and optimized navigation for a smooth shopping journey.
-      </p>
-      <button onclick="alert('Get Started feature coming soon!')">Get Started</button>
-    </div>
-    <div>
-      <img src="https://images.unsplash.com/photo-1585238342028-88a04e78b84b?auto=format&fit=crop&w=600&q=80" alt="Smart Shopping Cart Illustration" />
-    </div>
-  </section>
+    <section class="section" id="solutions">
+        <h2>Our Smart Solutions</h2>
+        <div class="solutions-container">
+            <div class="solution-card">
+                <h3><i class="fas fa-qrcode"></i>Barcode Scanning</h3>
+                <p>Scan barcodes when placing items in cart to track spending</p>
+            </div>
+            <div class="solution-card">
+                <h3><i class="fas fa-map-marker-alt"></i> Store Navigation</h3>
+                <p>GPS-enabled cart navigation to help customers locate products quickly within the store.</p>
+            </div>
+            <div class="solution-card">
+                <h3><i class="fas fa-chart-line"></i> Real-time Billing</h3>
+                <p>Customer can track the real time spending to manage their budget.</p>
+            </div>
+            <div class="solution-card">
+                <h3><i class="fas fa-shield-alt"></i> Anti-theft Security</h3>
+                <p>Built-in security features to prevent theft and ensure accurate checkout.</p>
+            </div>
+        </div>
+    </section>
+<section class="section" id="budget">
 
-  <!-- Features Section -->
-  <main>
-    <h2>Key Features</h2>
-    <div class="features">
-      <div class="feature-item">
-        <div class="feature-icon icon-cart">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14.26l.03-.13L9 5h10V3H8.21l-.94-2H2v2h2l3.6 7.59-1.35 2.44c-.14.25-.21.54-.21.84 0 .83.67 1.5 1.5 1.5h12v-2H7.16z"/></svg>
-        </div>
-        <div class="feature-title">Integrated Barcode Scanning</div>
-        <div class="feature-desc">
-          Quickly and accurately scan items with integrated barcode scanners.
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon icon-chart">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 17h2v-7H4v7zm4 0h2V7H8v10zm4 0h2v-4h-2v4zm4 0h2v-10h-2v10z"/></svg>
-        </div>
-        <div class="feature-title">Real-time Billing</div>
-        <div class="feature-desc">
-          Track your spending as you shop with an up-to-date bill that adjusts as you add or remove items.
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon icon-map">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2l-6 2-4-2-6 2v18l6-2 4 2 6-2V2zm-10 15l-4-2V5l4 2v10zm2-9l4-2v10l-4 2V8z"/></svg>
-        </div>
-        <div class="feature-title">Optimized Navigation</div>
-        <div class="feature-desc">
-          Get the shortest path to collect all items on your shopping list, saving time and effort.
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon icon-lock">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2zM8 7a4 4 0 018 0v3H8V7z"/></svg>
-        </div>
-        <div class="feature-title">Secure Checkout</div>
-        <div class="feature-desc">
-          Restrict cart movement until payment confirmation, ensuring a safe and seamless checkout process.
-        </div>
-      </div>
-    </div>
 
-    <div class="cta">
-      <button class="btn-primary" onclick="alert('Checkout feature coming soon!')">Learn More</button>
-    </div>
-  </main>
+             <h2>Budget Breakdown</h2>  
+        <div class="hardware-pricing">
+		
+            <h3><i class="fas fa-shopping-cart"></i> Hardware Components Pricing</h3>
+            <div class="pricing-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Quantity</th>
+                            <th>Unit Price (LKR)</th>
+                            <th>Total Cost (LKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ESP8266</td>
+                            <td>2</td>
+                            <td>Rs. 1,740.00</td>
+                            <td>Rs. 3,480.00</td>
+                        </tr>
+                        <tr>
+                            <td>RFID reader and RFID tags</td>
+                            <td>1</td>
+                            <td>Rs. 450.00</td>
+                            <td>Rs. 450.00</td>
+                        </tr>
+                        <tr>
+                            <td>Active Buzzer</td>
+                            <td>1</td>
+                            <td>Rs. 400.00</td>
+                            <td>Rs. 400.00</td>
+                        </tr>
+                        <tr>
+                            <td>GM65 Barcode Scanner</td>
+                            <td>1</td>
+                            <td>Rs. 8,000.00</td>
+                            <td>Rs. 8,000.00</td>
+                        </tr>
+                        <tr>
+                            <td>HX711 Load Cell</td>
+                            <td>1</td>
+                            <td>Rs. 750.00</td>
+                            <td>Rs. 750.00</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3"><strong>Total Hardware Cost</strong></td>
+                            <td><strong>Rs. 20,520.00</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
-  <footer>
-    &copy; 2025 Smart Shopping Cart Project. All rights reserved.
-  </footer>
+    <section class="section" id="tech">
+        <h2>Technology Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-section">
+                <h3><i class="fas fa-microchip"></i> Hardware</h3>
+                <ul class="tech-list">
+                    <li><i class="fas fa-circle"></i> Esp8266 - Main Controller</li>
+                    <li><i class="fas fa-circle"></i> RFID reader and RFID tags</li>
+                    <li><i class="fas fa-circle"></i> GM65 Barcode Scanner </li>
+                    <li><i class="fas fa-circle"></i> Load Cell Weight Sensor</li>
+                    <li><i class="fas fa-circle"></i> Battery Pack</li>
+		    <li><i class="fas fa-circle"></i> Step-Down Converter</li>
+		    <li><i class="fas fa-circle"></i> Active Buzzer</li>
+                </ul>
+            </div>
+            <div class="tech-section">
+                <h3><i class="fas fa-code"></i> Software</h3>
+                <ul class="tech-list">
+                    <li><i class="fas fa-circle"></i> Java - Backend Logic</li>
+                    <li><i class="fas fa-circle"></i> React - Mobile App</li>
+                    <li><i class="fas fa-circle"></i> Node.js - API Server</li>
+                    <li><i class="fas fa-circle"></i> Mysql - Database</li>
+                    <li><i class="fas fa-circle"></i> AWS Cloud Services</li>
+                    
+                </ul>
+            </div>
+        </div>
+    </section>
 
+<section class="section" id="architecture">
+        <h2>Backend Technologies</h2>
+        <div class="architecture-container">
+            <img src="images/Back-End-Technology.png" alt="Backend technologies" class="backend-image">
+                    </div>
+    </section>
+
+<section class="section" id="security">
+        <h2>Security And Reliability</h2>
+        <div class="security-container">
+            <img src="images/Security-Reliability.png" alt="Security and Reliability" class="security-image">
+                    </div>
+    </section>
+
+<section class="section" id="design">
+        <h2>Cart Design</h2>
+        <div class="design-grid">
+            <div class="design-card">
+                <div class="design-image-container">
+                    <img src="images/1.png" alt="SmartCart Front View" class="design-image">
+                                    </div>
+            </div>
+            <div class="design-card">
+                <div class="design-image-container">
+                    <img src="images/2.png" alt="SmartCart Side View" class="design-image">
+                    
+                </div>
+            </div>
+            <div class="design-card">
+                <div class="design-image-container">
+                    <img src="images/3.png" alt="SmartCart Internal Components" class="design-image">
+                    
+                </div>
+            </div>
+            <div class="design-card">
+                <div class="design-image-container">
+                    <img src="images/4.png" alt="SmartCart Complete Assembly" class="design-image">
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="team">
+        <h2>Our Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="team-avatar">
+   			<img src="images/Dhananji.jpg" alt="Dhananji">
+		</div>
+                <h3>E/20/062</h3>
+                <p>Dhananji K.S</p>
+            </div>
+            <div class="team-member">
+                <div class="team-avatar">
+                    <img src="images/Chamuditha.jpg" alt="Chamuditha">
+                </div>
+                <h3>E/20/035</h3>
+                <p>Bandara K.C.H.N.A.W.M.R.C.J.N</p>
+            </div>
+            <div class="team-member">
+                <div class="team-avatar">
+                    <img src="images/Dimantha.jpg" alt="Dimantha">
+                </div>
+                <h3>E/20/397</h3>
+                <p>Tilakasiri P.D</p>
+            </div>
+            <div class="team-member">
+                <div class="team-avatar">
+                    <img src="images/Janindu.jpg" alt="Janindu">
+                </div>
+                <h3>E/20/318</h3>
+                <p>Ranawaka R.A.D.J</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="links">
+        <h2>Project Links</h2>
+        <div class="links-container">
+            <a href="https://github.com/cepdnaclk/e20-3yp-Smart-Shopping-Cart" class="link-button">
+                <i class="fab fa-github"></i> GitHub Repository
+            </a>
+            <a href="#" class="link-button">
+                <i class="fas fa-video"></i> Demo Video
+            </a>
+            <a href="#" class="link-button">
+                <i class="fas fa-file-pdf"></i> Documentation
+            </a>
+            <a href="https://cepdnaclk.github.io/e20-3yp-Smart-Shopping-Cart/" class="link-button">
+                <i class="fas fa-play"></i> Project Page
+            </a>
+            <a href="#" class="link-button">
+                <i class="fas fa-envelope"></i> Contact Us
+            </a>
+        </div>
+    </section>
+
+    <script>
+        // Scroll indicator
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.querySelector('.scroll-indicator').style.width = scrollPercent + '%';
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactive hover effects
+        document.querySelectorAll('.solution-card, .team-member, .budget-item').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Parallax effect for floating cart
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const cart = document.querySelector('.floating-cart');
+            if (cart) {
+                cart.style.transform = `translateY(calc(-50% + ${scrolled * 0.5}px)) rotate(${scrolled * 0.05}deg)`;
+            }
+        });
+    </script>
 </body>
 </html>
