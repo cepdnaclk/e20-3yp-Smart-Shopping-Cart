@@ -1,0 +1,34 @@
+This directory is intended for configuration files and certificates used at runtime by the firmware.
+
+Files:
+------
+
+1. emqx.env  
+   - Stores Wi-Fi and EMQX MQTT credentials in key=value format.  
+   - Example:  
+       WIFI_SSID=YourSSID  
+       WIFI_PASSWORD=YourPassword  
+       MQTT_SERVER=your-emqx-server.com  
+       MQTT_PORT=8883  
+       MQTT_USER=your_mqtt_username  
+       MQTT_PASS=your_mqtt_password  
+       MQTT_TOPIC=smart_cart/position  
+
+2. emqxsl-ca.crt  
+   - The CA certificate used for EMQX TLS connection.
+
+How to Use:
+-----------
+
+- Modify `emqx.env` with your correct Wi-Fi and EMQX credentials (except the `MQTT_TOPIC`, which is predefined).
+- Ensure this file and the CA certificate match those used by the Flutter mobile app.
+- Place the CA certificate from EMQX Cloud into `emqxsl-ca.crt`.
+- The contents of this directory are uploaded automatically with the firmware using:
+
+      pio run --target upload  
+
+Notes:
+------
+
+- This folder is **not** included in the firmware binary.
+- Files here are uploaded to the board’s internal LittleFS (SPIFFS) filesystem.
