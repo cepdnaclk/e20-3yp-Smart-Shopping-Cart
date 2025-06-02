@@ -1,0 +1,46 @@
+.checkout-container {
+  padding: 30px;
+  background: linear-gradient(to right, #ffffff, #e6f7ff);
+  min-height: 100vh;
+}
+
+table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.payment-section {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.payment-section label {
+  margin-right: 20px;
+}
+
+.amount-input {
+  margin-top: 15px;
+}
+
+.amount-input input {
+  padding: 10px;
+  width: 200px;
+}
+
+.btn-pay {
+  margin-top: 20px;
+  background: #28a745;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
