@@ -1,13 +1,12 @@
-import React, { createContext, useState } from "react";
-import { loadItemMap } from "../utils/LoadLocal";
-import Item from "../types/Item";
-import { v4 as uuidv4 } from "uuid";
-
 /**
  * ItemContext manages the complex grid system and item placement.
  * Implements a 2D grid structure: edge → row → column → items array
  * Handles drag-and-drop operations between shelves and inventory sidebar.
  */
+
+import React, { createContext, useState, useEffect } from "react";
+import { loadItemMap } from "../utils/LoadData";
+import { InventoryItem, Item } from "../types/Item";
 
 /**
  * Represents the state of an item being dragged
@@ -26,6 +25,8 @@ interface DraggingState {
  * @interface ItemContextType
  */
 interface ItemContextType {
+  inventoryItems: InventoryItem[];
+  setInventoryItems: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
   itemMap: Record<string, Item[][][]>;
   setItemMap: React.Dispatch<React.SetStateAction<Record<string, Item[][][]>>>;
   dragging: DraggingState | null;
@@ -64,13 +65,46 @@ export const ItemContext = createContext<ItemContextType | undefined>(
 export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [itemMap, setItemMap] = useState<Record<string, Item[][][]>>(() => {
-    const savedMap = loadItemMap();
-    console.log("Initial item map loaded:", savedMap);
-    return savedMap || {};
-  });
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
+  const [itemMap, setItemMap] = useState<Record<string, Item[][][]>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadItems = async () => {
+      try {
+        const savedMap = await loadItemMap();
+        console.log("Initial item map loaded:", savedMap);
+        setItemMap(savedMap || {});
+      } catch (error) {
+        console.error("Error loading item map:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadItems();
+  }, []);
 
   const [dragging, setDragging] = useState<DraggingState | null>(null);
+
+  /**
+   * Checks if an item with the given ID already exists in the grid
+   * @param itemId - The ID of the item to check
+   * @param currentMap - The current item map to search in
+   * @returns boolean - True if item exists, false otherwise
+   */
+  const isItemAlreadyInGrid = (itemId: string, currentMap: Record<string, Item[][][]>): boolean => {
+    for (const edge in currentMap) {
+      for (const row of currentMap[edge]) {
+        for (const cell of row) {
+          if (cell.some(item => item.id === itemId)) {
+            console.warn(`Item with ID ${itemId} already exists in grid.`);
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  };
 
   /**
    * Initiates drag operation for an existing grid item
@@ -110,6 +144,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
    * Processes item drops onto grid cells
    * Handles both new items from sidebar and existing item moves
    * Maintains proper grid structure and item indexing
+   * Prevents duplicate items from being added
    * @param e - Drag event
    * @param edge - Edge number of the fixture the item is dropped on
    * @param rowIndex - Row index of the cell the item dropped to
@@ -162,10 +197,16 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
           console.log("Adding new item from sidebar");
           const newItem: Item = JSON.parse(jsonData);
 
-          // Add metadata for positioning + unique ID
+          // Check if item already exists in the grid
+          if (isItemAlreadyInGrid(newItem.id, newMap)) {
+            console.warn(`Item with ID ${newItem.id} already exists in grid. Skipping addition.`);
+            return prevMap; // Return unchanged map
+          }
+
+          // Add metadata for positioning, keeping original ID
           const newItemWithMeta = {
             ...newItem,
-            id: uuidv4(), // ← this ensures uniqueness
+            // Keep original ID instead of generating new one
             row: rowIndex,
             col: colIndex,
             index: targetCell.length,
@@ -351,6 +392,8 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ItemContext.Provider
       value={{
+        inventoryItems,
+        setInventoryItems,
         itemMap,
         setItemMap,
         dragging,

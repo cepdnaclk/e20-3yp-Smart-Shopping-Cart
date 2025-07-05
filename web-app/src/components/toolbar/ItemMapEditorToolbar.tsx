@@ -1,7 +1,8 @@
 import React from "react";
 import { useFixtureContext } from "../../hooks/useFixtureContext";
-import { clearStoredData, saveData } from "../../utils/SaveLocal";
+import { saveLayoutData } from "../../utils/SaveData";
 import { useItemContext } from "../../hooks/useItemContext";
+import { Save } from "lucide-react";
 
 /**
  * ItemMapEditorToolbar - Item Map Editor Action Bar
@@ -21,28 +22,27 @@ const ItemMapEditorToolbar: React.FC = () => {
     <div style={{ display: "flex", alignItems: "center" }}>
       {/* Save changes button with data persistence */}
       <button
+        title="save"
         onClick={() => {
-          saveData(itemMap, fixtures);
+          saveLayoutData(itemMap, fixtures);
         }}
         style={{
           padding: "8px 12px",
           fontSize: "14px",
           fontWeight: 500,
+          border: "2px solid #ddd",
           borderRadius: "6px",
-          backgroundColor: "#2ecc71",
-          color: "white",
-          marginRight: "10px",
+          color: "rgb(102, 102, 102)",
+          backgroundColor: "rgb(255, 255, 255)",
           cursor: "pointer",
-          transition: "background-color 0.2s",
+          marginRight: "10px",
         }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#27ae60")}
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#2ecc71")}
       >
-        Save Changes
+        <Save size={17} color="rgb(102, 102, 102)" strokeWidth={2} />
       </button>
 
       {/* Clear all data button with confirmation styling */}
-      <button
+      {/* <button
         onClick={() => {
           clearStoredData();
         }}
@@ -64,7 +64,7 @@ const ItemMapEditorToolbar: React.FC = () => {
         }
       >
         Clear All
-      </button>
+      </button> */}
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import { createContext, useState, ReactNode } from "react";
-import { useFixtureContext } from "../hooks/useFixtureContext";
-
 /**
  * EdgeContext provides functionality for managing fixture edges and adding nodes.
  * Handles edge selection state and coordinates for node insertion at edge midpoints.
  */
+
+import { createContext, useState, ReactNode } from "react";
+import { useFixtureContext } from "../hooks/useFixtureContext";
 
 /**
  * Context interface for edge management operations

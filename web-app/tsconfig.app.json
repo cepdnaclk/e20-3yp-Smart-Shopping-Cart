@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "archived/useFixture.ts", "archived/Sidebar.tsx", "archived/Toolbar.tsx", "archived/useSidebar.ts"]
+  "include": ["src"]
 }

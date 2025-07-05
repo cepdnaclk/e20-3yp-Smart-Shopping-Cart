@@ -1,10 +1,10 @@
-import { createContext, useState, ReactNode, SetStateAction } from "react";
-import Fixture from "../types/Fixture";
-
 /**
  * NodeContext handles individual node manipulation within fixtures.
  * Manages node selection, positioning, and deletion with coordinate scaling.
  */
+
+import { createContext, useState, ReactNode, SetStateAction } from "react";
+import Fixture from "../types/Fixture";
 
 /**
  * Context interface for node (points of the fixture shape) management operations
