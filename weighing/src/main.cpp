@@ -24,7 +24,7 @@ HX711 scale;
 float calibration_factor = 990.00;
 const int NUM_READINGS = 10;        // More readings for better accuracy
 const float WEIGHT_THRESHOLD = 5.0; // Minimum detectable weight (grams)
-const float MAX_WEIGHT = 5000.0;    // Maximum reasonable weight (grams)
+const float MAX_WEIGHT = 1000.0;    // Maximum reasonable weight (grams)
 
 // Variables for weight filtering and stability
 float lastStableWeight = 0.0;
