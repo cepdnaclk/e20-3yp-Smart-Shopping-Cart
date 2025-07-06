@@ -8,8 +8,8 @@
 
 // === Configuration ===
 // WiFi credentials
-const char* ssid = "Janidu";
-const char* password = "12345678";
+const char* ssid = "Dialog 4G 672";
+const char* password = "f6A40De1";
 
 // AWS IoT Core endpoint
 const char* awsEndpoint = "apgkm0fe4pifa-ats.iot.us-east-1.amazonaws.com";

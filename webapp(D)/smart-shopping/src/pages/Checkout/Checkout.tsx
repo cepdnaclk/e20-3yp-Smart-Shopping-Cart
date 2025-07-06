@@ -2,17 +2,31 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Checkout.css';
 
-const Checkout = () => {
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+interface LocationState {
+  cartItems: CartItem[];
+  cartWeight: number;
+  totalWeight: number;
+}
+
+const Checkout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { cartItems, cartWeight, totalWeight } = location.state || {};
-  const [paymentMethod, setPaymentMethod] = useState('cash');
-  const [amount, setAmount] = useState('');
+  const { cartItems = [], cartWeight = 0, totalWeight = 0 } = (location.state as LocationState) || {};
 
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
+  const [amount, setAmount] = useState<string>('');
 
-  const handlePayment = () => {
+  const total: number = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  const handlePayment = (): void => {
     if (parseFloat(amount) >= total) {
       navigate('/success');
     } else {
@@ -20,7 +34,7 @@ const Checkout = () => {
     }
   };
 
-  if (!cartItems) {
+  if (!cartItems || cartItems.length === 0) {
     return <p>No cart data. Please go back to dashboard.</p>;
   }
 
@@ -32,7 +46,7 @@ const Checkout = () => {
           <tr><th>Item</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>
         </thead>
         <tbody>
-          {cartItems.map(item => (
+          {cartItems.map((item) => (
             <tr key={item.id}>
               <td>{item.name}</td>
               <td>{item.quantity}</td>

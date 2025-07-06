@@ -2,10 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SuccessPage.css';
 
-const SuccessPage = () => {
+const SuccessPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleBackToDashboard = () => {
+  const handleBackToDashboard = (): void => {
     navigate('/cashier');
   };
 
