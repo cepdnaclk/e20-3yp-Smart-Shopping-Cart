@@ -4,59 +4,69 @@ import { FixtureProvider } from "./context/FixtureContext";
 import { EdgeProvider } from "./context/EdgeContext";
 import { NodeProvider } from "./context/NodeContext";
 import { SidebarProvider } from "./context/SidebarContext";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import UIManager from "./components/UIManager";
-import AuthPage from "./AuthPage";
+import { AuthProvider } from "./context/AuthContext";
+import EditorPage from "./pages/EditorPage";
+import AuthPage from "./pages/AuthPage";
 import { EditorProvider } from "./context/EditorContext";
+import DashboardPage from "./pages/DashboardPage";
+import { useAuthContext } from "./hooks/context/useAuthContext";
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuthContext();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+    if (!isAuthenticated) {
+        return <Navigate to="/" replace />;
+    }
 
-  return <>{children}</>;
+    return <>{children}</>;
 };
 
 const App: React.FC = () => {
-  return (
-    <BrowserRouter>
-      <EditorProvider>
-        <SidebarProvider>
-          <FixtureProvider>
-            <EdgeProvider>
-              <NodeProvider>
-                <AuthProvider>
-                  <Routes>
-                    <Route path="/" element={<AuthPage />} />
-                    <Route
-                      path="/editor"
-                      element={
-                        <ProtectedRoute>
-                          <UIManager />
-                        </ProtectedRoute>
-                      }
-                    />
-                    {/* <Route
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <EditorProvider>
+                    <SidebarProvider>
+                        <FixtureProvider>
+                            <EdgeProvider>
+                                <NodeProvider>
+                                    <Routes>
+                                        <Route path="/" element={<AuthPage />} />
+                                        <Route
+                                            path="/editor"
+                                            element={
+                                                <ProtectedRoute>
+                                                    <EditorPage />
+                                                </ProtectedRoute>
+                                            }
+                                        />
+                                        <Route
+                                            path="/dashboard"
+                                            element={
+                                                <ProtectedRoute>
+                                                    <DashboardPage />
+                                                </ProtectedRoute>
+                                            }
+                                        />
+                                        {/* <Route
                       path="/"
                       element={
                         <ProtectedRoute>
-                          <UIManager />
+                          <EditorPage />
                         </ProtectedRoute>
                       }
                     /> */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                </AuthProvider>
-              </NodeProvider>
-            </EdgeProvider>
-          </FixtureProvider>
-        </SidebarProvider>
-      </EditorProvider>
-    </BrowserRouter>
-  );
+                                        <Route path="*" element={<Navigate to="/" replace />} />
+                                    </Routes>
+                                </NodeProvider>
+                            </EdgeProvider>
+                        </FixtureProvider>
+                    </SidebarProvider>
+                </EditorProvider>
+            </AuthProvider>
+        </BrowserRouter>
+    );
 };
 
 export default App;

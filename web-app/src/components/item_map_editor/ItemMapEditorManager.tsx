@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ItemContainer from "./ItemContainer";
-import { useEdgeContext } from "../../hooks/useEdgeContext";
-import { useFixtureContext } from "../../hooks/useFixtureContext";
+import { useEdgeContext } from "../../hooks/context/useEdgeContext";
+import { useFixtureContext } from "../../hooks/context/useFixtureContext";
+import { useAuthContext } from "../../hooks/context/useAuthContext";
+import { useItemContext } from "../../hooks/context/useItemContext";
+import { loadItemMap } from "../../utils/LoadData";
 
 /**
  * ItemMapEditorManager - Grid-Based Item Organization Interface
@@ -15,6 +18,24 @@ import { useFixtureContext } from "../../hooks/useFixtureContext";
 const ItemMapEditorManager: React.FC = () => {
     const { selectedEdge } = useEdgeContext();
     const { selectedFixtureId } = useFixtureContext();
+    const { setItemMap } = useItemContext();
+
+    const { profile, isAuthenticated } = useAuthContext();
+
+    useEffect(() => {
+        const loadItems = async () => {
+            if (profile?.storeName != undefined && profile.role === "MANAGER") {
+                try {
+                    const savedMap = await loadItemMap(profile.storeName);
+                    console.log("Initial item map loaded:", savedMap);
+                    setItemMap(savedMap || {});
+                } catch (error) {
+                    console.error("Error loading item map:", error);
+                }
+            }
+        };
+        loadItems();
+    }, [isAuthenticated]);
 
     return (
         <div

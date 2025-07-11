@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { FixtureContext } from "../context/FixtureContext";
+import { FixtureContext } from "../../context/FixtureContext";
 
 /**
  * Custom hook for accessing FixtureContext with error handling

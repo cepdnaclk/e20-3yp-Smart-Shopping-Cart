@@ -1,9 +1,9 @@
 import React from "react";
-import { useSidebarContext } from "../../hooks/useSidebarContext";
+import { useSidebarContext } from "../../hooks/context/useSidebarContext";
 import { Menu } from "lucide-react";
 import ItemMapEditorToolbar from "./ItemMapEditorToolbar";
 import LayoutEditorToolbar from "./LayoutEditorToolbar";
-import { useEditorContext } from "../../hooks/useEditorContext";
+import { useEditorContext } from "../../hooks/context/useEditorContext";
 import InventoryEditorToolbar from "./InventoryEditorToolbar";
 import UserMenu from "./UserMenu";
 
@@ -37,7 +37,7 @@ const ToolbarManager: React.FC = () => {
                 left: "0",
                 right: "0",
                 height: "40px",
-                zIndex: 999,
+                zIndex: 900,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
                 fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
                 color: "#333",

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useItemContext } from "../../hooks/useItemContext";
 import { Trash2 } from "lucide-react";
 import { Item, ItemContainerProps } from "../../types/Item";
+import { useItemContext } from "../../hooks/context/useItemContext";
 
 /**
  * ItemContainer - Grid-Based Item Organization Component

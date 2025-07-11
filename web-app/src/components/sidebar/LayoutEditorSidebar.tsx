@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useEdgeContext } from "../../hooks/useEdgeContext";
-import { useFixtureContext } from "../../hooks/useFixtureContext";
-import { useNodeContext } from "../../hooks/useNodeContext";
-import { useEditorContext } from "../../hooks/useEditorContext";
+import { useEditorContext } from "../../hooks/context/useEditorContext";
+import { useEdgeContext } from "../../hooks/context/useEdgeContext";
+import { useFixtureContext } from "../../hooks/context/useFixtureContext";
+import { useNodeContext } from "../../hooks/context/useNodeContext";
 
 /**
  * LayoutEditorSidebar - Properties Panel for Layout Editing

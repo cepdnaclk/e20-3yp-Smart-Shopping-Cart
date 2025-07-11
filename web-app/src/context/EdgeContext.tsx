@@ -4,7 +4,7 @@
  */
 
 import { createContext, useState, ReactNode } from "react";
-import { useFixtureContext } from "../hooks/useFixtureContext";
+import { useFixtureContext } from "../hooks/context/useFixtureContext";
 
 /**
  * Context interface for edge management operations

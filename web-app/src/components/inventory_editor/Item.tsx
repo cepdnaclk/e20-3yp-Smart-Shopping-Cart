@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { ItemProps } from "../../types/Item";
+import { ItemProps, Product } from "../../types/Item";
 
 const Item: React.FC<ItemProps> = ({
-    id,
-    name,
-    imageUrl,
-    count,
+    barcode,
+    productName,
+    productCategory,
+    productBrand,
+    productPrice,
+    productQuantity,
+    productShelfNumber,
     removeItem,
-    updateItemCount,
+    updateItem,
 }) => {
     const [hovered, setHovered] = useState(false);
 
@@ -30,7 +33,7 @@ const Item: React.FC<ItemProps> = ({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
-            {/* Header with Delete Button */}
+            {/* Header with Product Name and Delete Button */}
             <div
                 style={{
                     display: "flex",
@@ -49,19 +52,22 @@ const Item: React.FC<ItemProps> = ({
                         lineHeight: "1.3",
                         flex: 1,
                     }}
-                    title={name}
+                    title={productName}
                 >
-                    {name}
+                    {productName}
                 </h3>
 
                 <button
-                    onClick={() => removeItem(id)}
+                    onClick={() => removeItem(barcode)}
                     title="Delete item"
                     style={{
                         backgroundColor: "rgba(0, 0, 0, 0.27)",
                         border: "none",
                         borderRadius: "12px",
                         flexShrink: 0,
+                        padding: "8px",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
                     }}
                     onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = "rgba(255, 65, 65, 0.85)";
@@ -76,18 +82,52 @@ const Item: React.FC<ItemProps> = ({
                 </button>
             </div>
 
-            {/* Image */}
+            {/* Brand and Category */}
+            <div style={{ marginBottom: "8px", marginLeft: "6px" }}>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
+                    <span
+                        style={{
+                            fontSize: "12px",
+                            fontWeight: 500,
+                            color: "#64748b",
+                            backgroundColor: "#f1f5f9",
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                        }}
+                    >
+                        {productBrand}
+                    </span>
+                    <span
+                        style={{
+                            fontSize: "12px",
+                            fontWeight: 500,
+                            color: "#64748b",
+                            backgroundColor: "#f1f5f9",
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                        }}
+                    >
+                        {productCategory}
+                    </span>
+                </div>
+            </div>
+
+            {/* Image Placeholder */}
             <div
                 style={{
-                    marginBottom: "6px",
+                    marginBottom: "8px",
                     position: "relative",
                     overflow: "hidden",
                     borderRadius: "16px",
                 }}
             >
                 <img
-                    src={imageUrl}
-                    alt={name}
+                    src="https://via.placeholder.com/300x180/e2e8f0/64748b?text=No+Image+Available"
+                    alt="Product image not available"
                     style={{
                         width: "100%",
                         height: "180px",
@@ -97,6 +137,61 @@ const Item: React.FC<ItemProps> = ({
                         transform: hovered ? "scale(1.02)" : "scale(1)",
                     }}
                 />
+            </div>
+
+            {/* Price */}
+            <div
+                style={{
+                    marginBottom: "8px",
+                    marginLeft: "6px",
+                }}
+            >
+                <span
+                    style={{
+                        fontSize: "20px",
+                        fontWeight: 700,
+                        color: "#059669",
+                    }}
+                >
+                    ${productPrice?.toFixed(2)}
+                </span>
+            </div>
+
+            {/* Barcode */}
+            <div
+                style={{
+                    marginBottom: "8px",
+                    marginLeft: "6px",
+                }}
+            >
+                <span
+                    style={{
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        color: "#64748b",
+                        fontFamily: "monospace",
+                    }}
+                >
+                    Barcode: {barcode}
+                </span>
+            </div>
+
+            {/* Shelf Number */}
+            <div
+                style={{
+                    marginBottom: "8px",
+                    marginLeft: "6px",
+                }}
+            >
+                <span
+                    style={{
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        color: "#64748b",
+                    }}
+                >
+                    Shelf: {productShelfNumber}
+                </span>
             </div>
 
             {/* Quantity Input */}
@@ -124,10 +219,20 @@ const Item: React.FC<ItemProps> = ({
                 </span>
 
                 <input
-                    title="Item Count"
+                    title="Item Quantity"
                     type="number"
-                    value={count}
-                    onChange={(e) => updateItemCount(id, parseInt(e.target.value) || 0)}
+                    value={productQuantity}
+                    onChange={(e) =>
+                        updateItem({
+                            barcode,
+                            productName,
+                            productCategory,
+                            productBrand,
+                            productPrice,
+                            productQuantity: Number(e.target.value),
+                            productShelfNumber,
+                        } as Product)
+                    }
                     min="0"
                     style={{
                         width: "80px",
@@ -142,9 +247,16 @@ const Item: React.FC<ItemProps> = ({
                         outline: "none",
                         transition: "border-color 0.2s ease",
                     }}
+                    onFocus={(e) => {
+                        e.target.style.borderColor = "#3b82f6";
+                    }}
+                    onBlur={(e) => {
+                        e.target.style.borderColor = "#e2e8f0";
+                    }}
                 />
             </div>
         </div>
     );
 };
+
 export default Item;

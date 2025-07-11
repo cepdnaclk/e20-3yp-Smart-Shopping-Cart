@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Stage, Layer, Text, Arrow } from "react-konva";
 import FixtureComp from "./canvas/FixtureComp";
-import { useFixtureContext } from "../../hooks/useFixtureContext";
+import { useFixtureContext } from "../../hooks/context/useFixtureContext";
+import { useAuthContext } from "../../hooks/context/useAuthContext";
+import { loadFixtureLayout } from "../../utils/LoadData";
 
 /**
  * LayoutEditorManager - Canvas-Based Layout Editor
@@ -19,7 +21,25 @@ import { useFixtureContext } from "../../hooks/useFixtureContext";
  */
 
 const LayoutEditorManager: React.FC = () => {
-    const { fixtures } = useFixtureContext();
+
+    const { profile, isAuthenticated } = useAuthContext();
+    const { fixtures, setFixtures } = useFixtureContext();
+
+    useEffect(() => {
+        const loadFixtures = async () => {
+            if (profile?.storeName != undefined && profile.role === "MANAGER") {
+                try {
+                    const loadedLayout = await loadFixtureLayout(profile.storeName);
+                    console.log("Initial fixtures loaded:", loadedLayout);
+                    setFixtures(loadedLayout || {});
+                } catch (error) {
+                    console.error("Error loading fixtures:", error);
+                }
+            }
+        };
+
+        loadFixtures();
+    }, [isAuthenticated]);
 
     const [dimensions, setDimensions] = useState({
         width: typeof window !== "undefined" ? window.innerWidth : 800,

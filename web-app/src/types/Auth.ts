@@ -7,11 +7,9 @@ export type SignupFormData = {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
-  confirmPassword: string;
-  phone: string;
+  phoneNumber: string;
   nic: string;
-  role: string;
+  role: UserRole;
 }
 
 export type ForgotPasswordFormData = {
@@ -34,19 +32,65 @@ export type FormFieldProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   autoComplete?: string;
-  options?: { label: string; value: string }[]; 
+  required?: boolean;
+}
+
+export type SelectFieldProps = {
+    label: string;
+    name: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    options: { value: string; label: string }[];
+    required?: boolean;
 }
 
 export type AuthContextType = {
   isAuthenticated: boolean;
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: string;
-    [key: string]: any; // nic, phone, _id, etc.
-  } | null;
   login: (username: string, password: string) => Promise<void>;
-  register: (userData: any) => Promise<void>;
   logout: () => void;
+  profile: Profile | null;
+  setProfile: (profile: Profile | null) => void;
 }
+
+
+
+
+
+
+// FROM BACEND
+export interface Tokens {
+  access_token: string;
+  refresh_token: string;
+  role: UserRole;
+}
+
+export interface Profile {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  nic?: string;
+  storeName?: string;
+  role?: UserRole;
+  username?: string;
+}
+
+export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  role: UserRole;
+  message?: string;
+}
+
+export interface ApiResponse<T = any> {
+  message?: string;
+  data?: T;
+}
+
+export type UserRole = 'ADMIN' | 'MANAGER' | 'CASHIER' | 'STAFF' | 'SECURITY' | 'SUPPLIER';
+

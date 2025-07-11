@@ -3,6 +3,7 @@
  * Includes position metadata for grid system
  */
 
+
 export type Item = {
   id: string; // Unique ID of the item
   name: string; // Name of the item
@@ -19,14 +20,15 @@ export type InventoryItem = {
 }
 
 export type ItemProps = {
-    id: string;
-    name: string;
-    imageUrl: string;
-    count: number;
-    removeItem: (id: string) => void;
-    updateItemCount: (id: string, newCount: number) => void;
-    incrementCount: (id: string) => void;
-    decrementCount: (id: string) => void;
+    barcode: string;
+    removeItem: (barcode: string) => void;
+    updateItem: (product: Product) => void;
+    productName: string | undefined;
+    productCategory: string;
+    productBrand: string;
+    productPrice: number;
+    productQuantity: number;
+    productShelfNumber: number;
 }
 
 export type ItemContainerProps = {
@@ -34,3 +36,35 @@ export type ItemContainerProps = {
   cols?: number;
   edge: string;
 }
+
+// Define ProductFormState to manage form inputs, including the File object
+export interface ProductFormState {
+    barcode?: string; // For update operations
+    productName: string;
+    productDescription: string;
+    productPrice: string; // Stored as string from input, converted to number for API
+    productQuantity: string; // Stored as string from input, converted to number for API
+    productCategory: string;
+    productShelfNumber: string; // Stored as string from input, converted to number for API
+    productRowNumber: string; // Stored as string from input, converted to number for API
+    productBrand: string;
+    productWeight: string; // Stored as string from input, converted to number for API
+    productImageFile?: File; // For the actual file input
+}
+
+// Define interfaces for Product data
+// These should ideally come from a shared types file (e.g., ../types/Product.ts)
+export interface Product {
+    barcode: string; // Barcode is generated on add, required for update/delete
+    productName: string;
+    productDescription: string;
+    productPrice: number;
+    productQuantity: number;
+    productCategory: string;
+    productImage?: File | string; // File for upload, string for URL/path when fetched
+    productShelfNumber: number;
+    productRowNumber: number;
+    productBrand: string;
+    productWeight: number;
+}
+

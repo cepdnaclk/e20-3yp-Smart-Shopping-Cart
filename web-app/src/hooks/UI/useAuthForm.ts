@@ -7,12 +7,13 @@
 import { useState, useCallback } from "react";
 import {
     LoginFormData,
-    SignupFormData,
+    SignupFormData, // This type will be adjusted to match backend registration
     ForgotPasswordFormData,
     ResetPasswordFormData,
-} from "../types/Auth";
-import { useAuth } from "../context/AuthContext";
+    UserRole, // Assuming UserRole is available for signup
+} from "../../types/Auth";
 import { authService } from "../services/authService";
+import { useAuthContext } from "../context/useAuthContext";
 
 export const useAuthForm = () => {
     // Tracks the current authentication mode ('login', 'signup', 'forgot', 'reset')
@@ -35,16 +36,14 @@ export const useAuthForm = () => {
         password: "",
     });
 
-    // Form input values for the signup form, including personal details and account credentials
+    // Form input values for the signup form, adjusted to match authService.register payload
     const [signupData, setSignupData] = useState<SignupFormData>({
         firstName: "",
         lastName: "",
         email: "",
-        password: "",
-        confirmPassword: "",
-        phone: "",
+        phoneNumber: "", 
         nic: "",
-        role: "",
+        role: "" as UserRole, // Ensure role is typed as UserRole
     });
 
     // Input values for the forgot password form (username and associated email)
@@ -63,7 +62,7 @@ export const useAuthForm = () => {
             confirmationPassword: "",
         });
 
-    const { login, register } = useAuth();
+    const { login } = useAuthContext(); // Only need 'login' from useAuth as 'register' is called directly via authService
 
     /**
      * Updates login form input values on change.
@@ -78,26 +77,13 @@ export const useAuthForm = () => {
     );
 
     /**
-     * Submits login form data to the login service.
-     * @param e - Form submission event
+     * Updates signup form input values on change.
+     * @param e - Input change event from signup form fields (can be input or select)
      */
     const handleSignupChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
             const { name, value } = e.target;
-            setSignupData((prev) => {
-                const newData = { ...prev, [name]: value };
-
-                // Auto-fill confirm password when password is being typed
-                if (
-                    name === "password" &&
-                    prev.confirmPassword === "" &&
-                    value.length > 0
-                ) {
-                    return { ...newData, confirmPassword: value };
-                }
-
-                return newData;
-            });
+            setSignupData((prev) => ({ ...prev, [name]: value }));
         },
         []
     );
@@ -128,6 +114,7 @@ export const useAuthForm = () => {
 
     /**
      * Submits login form data to the authentication service.
+     * Performs client-side validation before submission.
      * Displays success or error messages depending on the result.
      * @param e - Login form submission event
      */
@@ -137,12 +124,22 @@ export const useAuthForm = () => {
         setSuccess("");
         setIsLoading(true);
 
+        // Client-side validation for login
+        if (!loginData.username.trim() || !loginData.password.trim()) {
+            setError("Username and password are required.");
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            await login(loginData.username, loginData.password);
+            await login(loginData.username, loginData.password); // Assuming useAuth's login takes username, password directly
             setSuccess("Successfully logged in!");
-        } catch (error: any) {
+            // Clear form fields on successful login
+            setLoginData({ username: "", password: "" });
+        } catch (err: any) {
+            console.error('Login failed:', err);
             setError(
-                error.response?.data?.message ||
+                err.response?.data?.message ||
                 "Login failed. Please check your credentials and try again."
             );
         } finally {
@@ -152,8 +149,8 @@ export const useAuthForm = () => {
 
     /**
      * Submits signup form data to the authentication service.
-     * Performs validation checks (e.g., password match and minimum length) before sending.
-     * On success, switches to login mode and pre-fills login email.
+     * Performs validation checks (e.g., email format, phone/NIC length) before sending.
+     * On success, clears form and shows success message.
      * @param e - Signup form submission event
      */
     const handleSignupSubmit = async (e: React.FormEvent) => {
@@ -162,37 +159,45 @@ export const useAuthForm = () => {
         setSuccess("");
         setIsLoading(true);
 
-        if (signupData.password !== signupData.confirmPassword) {
-            setError(
-                "Passwords do not match. Please ensure both password fields are identical."
-            );
+        // Client-side validation for signup
+        if (!signupData.firstName || !signupData.lastName || !signupData.email || !signupData.phoneNumber || !signupData.nic || !signupData.role) {
+            setError('All fields are required.');
             setIsLoading(false);
             return;
         }
-
-        if (signupData.password.length < 6) {
-            setError("Password must be at least 6 characters long.");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signupData.email)) {
+            setError('Please enter a valid email address.');
+            setIsLoading(false);
+            return;
+        }
+        if (!/^\d{8,20}$/.test(signupData.phoneNumber)) {
+            setError('Phone number must be between 8 and 20 digits.');
+            setIsLoading(false);
+            return;
+        }
+        if (!/^\d{10,12}$/.test(signupData.nic)) {
+            setError('NIC must be between 10 and 12 digits.');
             setIsLoading(false);
             return;
         }
 
         try {
-            const { confirmPassword, ...registrationData } = signupData;
-            await register(registrationData);
-            setSuccess(
-                "Account created successfully! Please log in with your credentials."
-            );
-
-            setTimeout(() => {
-                setAuthMode("login");
-                setLoginData({
-                    username: signupData.email,
-                    password: "",
-                });
-            }, 1500);
-        } catch (error: any) {
+            // authService.register expects firstName, lastName, email, phoneNumber, nic, role
+            const response = await authService.register(signupData);
+            setSuccess(response.message || `User registered successfully! Username: ${response.username}, Password: ${response.password}`);
+            // Clear form fields on successful registration
+            setSignupData({
+                firstName: "",
+                lastName: "",
+                email: "",
+                phoneNumber: "",
+                nic: "",
+                role: "" as UserRole,
+            });
+        } catch (err: any) {
+            console.error('Registration failed:', err);
             setError(
-                error.response?.data?.message ||
+                err.response?.data?.message ||
                 "Registration failed. Please check your information and try again."
             );
         } finally {
@@ -211,6 +216,18 @@ export const useAuthForm = () => {
         setSuccess("");
         setIsLoading(true);
 
+        // Client-side validation for forgot password
+        if (!forgotPasswordData.username.trim() || !forgotPasswordData.email.trim()) {
+            setError('Username and email are required.');
+            setIsLoading(false);
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotPasswordData.email)) {
+            setError('Please enter a valid email address.');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             await authService.forgotPassword(forgotPasswordData);
             setSuccess("Reset code sent to your email! Please check your inbox.");
@@ -219,9 +236,10 @@ export const useAuthForm = () => {
                 email: forgotPasswordData.email,
             }));
             setAuthMode("reset");
-        } catch (error: any) {
+        } catch (err: any) {
+            console.error('Forgot password failed:', err);
             setError(
-                error.response?.data?.message ||
+                err.response?.data?.message ||
                 "Failed to send reset code. Please try again."
             );
         } finally {
@@ -241,6 +259,13 @@ export const useAuthForm = () => {
         setSuccess("");
         setIsLoading(true);
 
+        // Client-side validation for reset password
+        if (!resetPasswordData.email.trim() || !resetPasswordData.resetCode.trim() || !resetPasswordData.newPassword.trim() || !resetPasswordData.confirmationPassword.trim()) {
+            setError('All fields are required.');
+            setIsLoading(false);
+            return;
+        }
+
         if (
             resetPasswordData.newPassword !== resetPasswordData.confirmationPassword
         ) {
@@ -252,7 +277,7 @@ export const useAuthForm = () => {
         }
 
         if (resetPasswordData.newPassword.length < 6) {
-            setError("Password must be at least 6 characters long.");
+            setError("New password must be at least 6 characters long.");
             setIsLoading(false);
             return;
         }
@@ -272,13 +297,14 @@ export const useAuthForm = () => {
             setTimeout(() => {
                 setAuthMode("login");
                 setLoginData({
-                    username: resetPasswordData.email,
+                    username: resetPasswordData.email, // Assuming email can be used as username for login
                     password: "",
                 });
             }, 1500);
-        } catch (error: any) {
+        } catch (err: any) {
+            console.error('Reset password failed:', err);
             setError(
-                error.response?.data?.message ||
+                err.response?.data?.message ||
                 "Failed to reset password. Please check your reset code and try again."
             );
         } finally {

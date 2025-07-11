@@ -9,7 +9,7 @@
  */
 
 import React from "react";
-import { useEditorContext } from "../../hooks/useEditorContext";
+import { useEditorContext } from "../../hooks/context/useEditorContext";
 
 
 const InventoryEditorSidebar: React.FC = () => {
