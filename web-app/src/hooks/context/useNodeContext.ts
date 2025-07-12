@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { NodeContext } from "../context/NodeContext";
+import { NodeContext } from "../../context/NodeContext";
 
 /**
  * Custom hook for accessing NodeContext with error handling

@@ -1,5 +1,5 @@
 import React from 'react';
-import FormField from './FormField';
+import FormField from '../form_fields/FormField';
 import { ForgotPasswordFormData } from '../../types/Auth';
 
 interface ForgotPasswordFormProps {

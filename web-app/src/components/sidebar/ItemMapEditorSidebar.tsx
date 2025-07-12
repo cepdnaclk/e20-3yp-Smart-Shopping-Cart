@@ -9,18 +9,17 @@
  */
 
 import React, { useState } from "react";
-import { useItemContext } from "../../hooks/useItemContext";
-import { useEditorContext } from "../../hooks/useEditorContext";
+import { useEditorContext } from "../../hooks/context/useEditorContext";
 import { InventoryItem, Item } from "../../types/Item";
-import { inventoryService } from "../../services/inventoryService";
+import { useItemContext } from "../../hooks/context/useItemContext";
+import { inventoryService } from "../../hooks/services/inventoryService";
 
 const ItemMapEditorSidebar: React.FC = () => {
-    const { setDragging } = useItemContext();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { toggleEditor } = useEditorContext();
 
-    const { inventoryItems, setInventoryItems } = useItemContext();
+    const { inventoryItems, setInventoryItems, setDragging} = useItemContext();
 
     /**
      * Fetches inventory items from the server and updates context state.

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ItemContext } from "../context/ItemContext";
+import { ItemContext } from "../../context/ItemContext";
 
 /**
  * Custom hook for accessing ItemContext with error handling

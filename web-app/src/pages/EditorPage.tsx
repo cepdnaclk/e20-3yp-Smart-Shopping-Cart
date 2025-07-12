@@ -1,5 +1,5 @@
 /**
- * UIManager - Root UI Component
+ * EditorPage - Root UI Component
  *
  * Main orchestrator of the application UI.
  * Provides ItemContext to child components and manages layout including toolbar, sidebar,
@@ -9,24 +9,24 @@
  */
 
 import React from "react";
-import { useSidebarContext } from "../hooks/useSidebarContext";
-import LayoutEditorManager from "./layout_editor/LayoutEditorManager";
-import ItemMapEditorManager from "./item_map_editor/ItemMapEditorManager";
+import { useSidebarContext } from "../hooks/context/useSidebarContext";
+import LayoutEditorManager from "../components/layout_editor/LayoutEditorManager";
+import ItemMapEditorManager from "../components/item_map_editor/ItemMapEditorManager";
 import { ItemProvider } from "../context/ItemContext";
-import SidebarManager from "./sidebar/SidebarManager";
-import ToolbarManager from "./toolbar/ToolbarManager";
-import { useEditorContext } from "../hooks/useEditorContext";
-import InventoryEditorManager from "./inventory_editor/InventoryEditorManager";
+import SidebarManager from "../components/sidebar/SidebarManager";
+import ToolbarManager from "../components/toolbar/ToolbarManager";
+import { useEditorContext } from "../hooks/context/useEditorContext";
+import InventoryEditorManager from "../components/inventory_editor/InventoryEditorManager";
 
 /**
- * UIManager component renders the main app layout:
+ * EditorPage component renders the main app layout:
  * - Wraps children in ItemProvider for item-related state management
  * - Shows ToolbarManager at the top
  * - Conditionally renders SidebarManager based on sidebar visibility state
  * - Conditionally renders one of the editor managers based on the active editor
  */
 
-const UIManager: React.FC = () => {
+const EditorPage: React.FC = () => {
   const { isSidebarVisible } = useSidebarContext();
   const { activeEditor } = useEditorContext();
 
@@ -48,4 +48,4 @@ const UIManager: React.FC = () => {
   );
 };
 
-export default UIManager;
+export default EditorPage;

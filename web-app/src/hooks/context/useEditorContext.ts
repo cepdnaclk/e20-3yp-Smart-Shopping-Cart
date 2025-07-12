@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { EditorContext } from "../context/EditorContext";
+import { EditorContext } from "../../context/EditorContext";
 
 /**
  * Custom hook for accessing EditorContext with error handling

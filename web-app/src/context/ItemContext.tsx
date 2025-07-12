@@ -4,8 +4,7 @@
  * Handles drag-and-drop operations between shelves and inventory sidebar.
  */
 
-import React, { createContext, useState, useEffect } from "react";
-import { loadItemMap } from "../utils/LoadData";
+import React, { createContext, useState } from "react";
 import { InventoryItem, Item } from "../types/Item";
 
 /**
@@ -67,22 +66,6 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [itemMap, setItemMap] = useState<Record<string, Item[][][]>>({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const savedMap = await loadItemMap();
-        console.log("Initial item map loaded:", savedMap);
-        setItemMap(savedMap || {});
-      } catch (error) {
-        console.error("Error loading item map:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadItems();
-  }, []);
 
   const [dragging, setDragging] = useState<DraggingState | null>(null);
 

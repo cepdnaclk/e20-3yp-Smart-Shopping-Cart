@@ -2,9 +2,9 @@ import React from "react";
 import { Line } from "react-konva";
 import Fixture from "../../../types/Fixture";
 import NodeComp from "./NodeComp";
-import { useEdgeContext } from "../../../hooks/useEdgeContext";
-import { useNodeContext } from "../../../hooks/useNodeContext";
-import { useFixtureContext } from "../../../hooks/useFixtureContext";
+import { useEdgeContext } from "../../../hooks/context/useEdgeContext";
+import { useFixtureContext } from "../../../hooks/context/useFixtureContext";
+import { useNodeContext } from "../../../hooks/context/useNodeContext";
 
 /**
  * FixtureComp - Interactive Konva Fixture Component

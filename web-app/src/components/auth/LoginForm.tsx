@@ -1,6 +1,6 @@
 // components/LoginForm.tsx
 import React from "react";
-import FormField from "./FormField";
+import FormField from "../form_fields/FormField";
 import { LoginFormData } from "../../types/Auth";
 
 interface LoginFormProps {
@@ -21,12 +21,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
     return (
         <div>
             <FormField
-                label="Username or Email Address"
+                label="Username"
                 name="username"
                 type="text"
                 value={formData.username}
                 onChange={onChange}
-                placeholder="Enter your username or email"
+                placeholder="Enter your username"
                 autoComplete="username"
             />
             <FormField

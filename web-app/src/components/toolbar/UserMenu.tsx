@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useAuthForm } from "../../hooks/useAuthForm";
+import { useAuthForm } from "../../hooks/UI/useAuthForm";
+import { useAuthContext } from "../../hooks/context/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 const UserMenu: React.FC = () => {
-    const { user, logout } = useAuth();
-    const {
-
-    } = useAuthForm();
+    const navigate = useNavigate();
+    const { profile, logout } = useAuthContext();
+    const { } = useAuthForm();
     const [open, setOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -23,9 +23,7 @@ const UserMenu: React.FC = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    if (!user) return null;
-
-    const initials = user.firstName.charAt(0) + user.lastName.charAt(0);
+    if (!profile) return null;
 
     return (
         <div style={{ position: "relative" }} ref={menuRef}>
@@ -59,7 +57,9 @@ const UserMenu: React.FC = () => {
                     e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
                 }}
             >
-                {initials}
+                {profile.firstName &&
+                    profile.lastName &&
+                    profile.firstName.charAt(0) + profile.lastName.charAt(0)}
             </div>
 
             {/* Dropdown Menu */}
@@ -98,20 +98,7 @@ const UserMenu: React.FC = () => {
                                 marginBottom: "4px",
                             }}
                         >
-                            {user.firstName} {user.lastName}
-                            <div
-                                style={{
-                                    fontSize: "12px",
-                                    color: "#9ca3af",
-                                    background: "none",
-                                    padding: "4px 8px",
-                                    borderRadius: "6px",
-                                    display: "inline-block",
-                                    textTransform: "capitalize",
-                                }}
-                            >
-                                {user.role}
-                            </div>
+                            {profile.firstName} {profile.lastName}
                         </div>
                         <div
                             style={{
@@ -120,12 +107,41 @@ const UserMenu: React.FC = () => {
                                 marginBottom: "8px",
                             }}
                         >
-                            {user.email}
+                            {profile.role}
                         </div>
                     </div>
 
                     {/* Actions Section */}
                     <div style={{ padding: "12px" }}>
+                        <button
+                            onClick={() => {
+                                navigate("/dashboard");
+                            }}
+                            style={{
+                                width: "100%",
+                                background: "none",
+                                border: "none",
+                                color: "rgba(0, 0, 0, 1)",
+                                fontWeight: "500",
+                                cursor: "pointer",
+                                padding: "12px 16px",
+                                borderRadius: "8px",
+                                transition: "all 0.2s ease",
+                                fontSize: "14px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "8px",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = "rgba(102, 102, 102, 0.15)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = "transparent";
+                            }}
+                        >
+                            Dashboard
+                        </button>
                         <button
                             onClick={() => {
                                 logout();
@@ -177,12 +193,13 @@ const UserMenu: React.FC = () => {
             )}
 
             {/* Add keyframe animation to head */}
-            {typeof document !== 'undefined' && (() => {
-                const styleId = 'user-menu-animation';
-                if (!document.getElementById(styleId)) {
-                    const style = document.createElement('style');
-                    style.id = styleId;
-                    style.textContent = `
+            {typeof document !== "undefined" &&
+                (() => {
+                    const styleId = "user-menu-animation";
+                    if (!document.getElementById(styleId)) {
+                        const style = document.createElement("style");
+                        style.id = styleId;
+                        style.textContent = `
                         @keyframes slideIn {
                             from {
                                 opacity: 0;
@@ -194,10 +211,10 @@ const UserMenu: React.FC = () => {
                             }
                         }
                     `;
-                    document.head.appendChild(style);
-                }
-                return null;
-            })()}
+                        document.head.appendChild(style);
+                    }
+                    return null;
+                })()}
         </div>
     );
 };

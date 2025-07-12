@@ -1,5 +1,5 @@
-import { layoutService } from "../services/layoutService";
-import { inventoryService } from "../services/inventoryService";
+import { inventoryService } from "../hooks/services/inventoryService";
+import { layoutService } from "../hooks/services/layoutService";
 import Fixture from "../types/Fixture";
 import { Item, InventoryItem } from "../types/Item";
 

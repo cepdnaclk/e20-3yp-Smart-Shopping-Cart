@@ -8,10 +8,10 @@
  */
 
 import React from "react";
-import { useSidebarContext } from "../../hooks/useSidebarContext";
+import { useSidebarContext } from "../../hooks/context/useSidebarContext";
 import LayoutEditorSidebar from "./LayoutEditorSidebar";
 import ItemMapEditorSidebar from "./ItemMapEditorSidebar";
-import { useEditorContext } from "../../hooks/useEditorContext";
+import { useEditorContext } from "../../hooks/context/useEditorContext";
 import InventoryEditorSidebar from "./InventoryEditorSidebar";
 
 const SidebarManager: React.FC = () => {

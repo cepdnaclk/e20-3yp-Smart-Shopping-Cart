@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { EdgeContext } from "../context/EdgeContext";
+import { EdgeContext } from "../../context/EdgeContext";
 
 /**
  * Custom hook for accessing EdgeContext with error handling

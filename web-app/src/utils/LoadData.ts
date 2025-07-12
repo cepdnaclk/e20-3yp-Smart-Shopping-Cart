@@ -1,4 +1,4 @@
-import { layoutService } from "../services/layoutService";
+import { layoutService } from "../hooks/services/layoutService";
 
 /**
  * Data loading utilities for retrieving persisted application state from database
@@ -9,9 +9,9 @@ import { layoutService } from "../services/layoutService";
  * Loads the item mapping from localStorage
  * @returns Parsed item map or empty object if not found/corrupted
  */
-export const loadItemMap = async () => {
+export const loadItemMap: (storeName: string) => Promise<any> = async (storeName) => {
   try {
-    const layout = await layoutService.getLayout();
+    const layout = await layoutService.getLayout(storeName);
     return layout?.itemMap || {};
   } catch (error) {
     console.error("Error loading item map:", error);
@@ -23,9 +23,9 @@ export const loadItemMap = async () => {
  * Loads the fixture layout from localStorage
  * @returns Parsed fixture map or empty object if not found/corrupted
  */
-export const loadFixtureLayout = async () => {
+export const loadFixtureLayout: (storeName: string) => Promise<any> = async (storeName) => {
   try {
-    const layout = await layoutService.getLayout();
+    const layout = await layoutService.getLayout(storeName);
     return layout?.fixtureLayout || {};
   } catch (error) {
     console.error("Error loading store layout:", error);
