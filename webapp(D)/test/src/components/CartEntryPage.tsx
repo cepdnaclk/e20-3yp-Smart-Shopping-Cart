@@ -20,6 +20,9 @@ const CartEntry: React.FC = () => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showVerificationPopup, setShowVerificationPopup] = useState(false);
+  const [weightDifference, setWeightDifference] = useState<number | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<'success' | 'failed' | null>(null);
 
   // Debounce cart ID input
   useEffect(() => {
@@ -61,7 +64,7 @@ const CartEntry: React.FC = () => {
       setItems([]);
       return;
     }
-//backend API
+
     const fetchItems = async () => {
       setIsLoading(true);
       setError(null);
@@ -105,6 +108,22 @@ const CartEntry: React.FC = () => {
     return actualWeight - calculateExpectedWeight();
   }, [actualWeight, items, calculateExpectedWeight]);
 
+  // Check weight difference and show popup if needed
+  useEffect(() => {
+    const diff = calculateWeightDifference();
+    setWeightDifference(diff);
+    
+    if (diff !== null) {
+      if (Math.abs(diff) > 50) {
+        setVerificationStatus('failed');
+        setShowVerificationPopup(true);
+      } else {
+        setVerificationStatus('success');
+        setShowVerificationPopup(true);
+      }
+    }
+  }, [calculateWeightDifference]);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -113,23 +132,99 @@ const CartEntry: React.FC = () => {
       console.error('Logout error:', error);
     }
   };
-  // Inside the CartEntry component, modify the useEffect that checks the weight difference
-useEffect(() => {
-  if (calculateWeightDifference() !== null && Math.abs(calculateWeightDifference()!) > 50) {
-    navigate('/blocked', {
-      state: {
-        cartId: debouncedCartId,
-        cartWeight: actualWeight ? actualWeight / 1000 : 0, // Convert to kg
-        actualWeight: actualWeight ? actualWeight / 1000 : 0,
-        totalWeight: calculateExpectedWeight() / 1000 // Convert to kg
-      },
-      replace: true
-    });
-  }
-}, [calculateWeightDifference(), actualWeight, calculateExpectedWeight, navigate,debouncedCartId]);
+
+  const handleProceedToCheckout = () => {
+    if (verificationStatus === 'success') {
+      navigate('/checkout', {
+        state: {
+          cartId: debouncedCartId,
+          items,
+          totalWeight: calculateExpectedWeight(),
+          actualWeight
+        }
+      });
+    }
+    setShowVerificationPopup(false);
+  };
+
+  const handleContinueAnyway = () => {
+    setShowVerificationPopup(false);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
+      {/* Verification Popup */}
+      {showVerificationPopup && (
+        <div className="fixed inset-0 z-50 flex items-start justify-start p-4 pointer-events-none">
+          <div className={`pointer-events-auto rounded-lg shadow-xl overflow-hidden w-full max-w-md ${
+            verificationStatus === 'failed' ? 
+            'bg-red-50 border border-red-200' : 
+            'bg-green-50 border border-green-200'
+          }`}>
+            <div className={`p-4 ${
+              verificationStatus === 'failed' ? 
+              'bg-red-600 text-white' : 
+              'bg-green-600 text-white'
+            }`}>
+              <h3 className="text-lg font-bold">
+                {verificationStatus === 'failed' ? 
+                '🚫 Weight Mismatch Detected' : 
+                '✅ Weight Verified Successfully'}
+              </h3>
+            </div>
+            <div className="p-4">
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm text-gray-500">Expected Weight</p>
+                  <p className="font-medium">{calculateExpectedWeight().toLocaleString()}g</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Actual Weight</p>
+                  <p className="font-medium">{actualWeight?.toLocaleString() || '-'}g</p>
+                </div>
+              </div>
+              
+              {weightDifference !== null && (
+                <div className={`p-3 rounded ${
+                  verificationStatus === 'failed' ? 
+                  'bg-red-100 text-red-800' : 
+                  'bg-green-100 text-green-800'
+                }`}>
+                  <p className="font-medium">
+                    {verificationStatus === 'failed' ? (
+                      `Discrepancy: ${Math.abs(weightDifference).toLocaleString()}g`
+                    ) : (
+                      'Weight matches within tolerance (±50g)'
+                    )}
+                  </p>
+                </div>
+              )}
+              
+              <div className="mt-4 flex justify-end space-x-2">
+                {verificationStatus === 'failed' && (
+                  <button
+                    onClick={handleContinueAnyway}
+                    className="px-4 py-2 rounded-md text-sm font-medium bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  >
+                    Continue Anyway
+                  </button>
+                )}
+                <button
+                  onClick={verificationStatus === 'success' ? handleProceedToCheckout : handleContinueAnyway}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    verificationStatus === 'failed' ? 
+                    'bg-red-600 text-white hover:bg-red-700' : 
+                    'bg-green-600 text-white hover:bg-green-700'
+                  }`}
+                >
+                  {verificationStatus === 'success' ? 'Proceed to Checkout' : 'Continue'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Dashboard Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -217,17 +312,17 @@ useEffect(() => {
                 </div>
 
                 <div className={`p-4 rounded-lg ${
-                  calculateWeightDifference() === null ? 'bg-gray-50' : 
-                  Math.abs(calculateWeightDifference()!) <= 50 ? 'bg-green-50' : 
+                  weightDifference === null ? 'bg-gray-50' : 
+                  Math.abs(weightDifference) <= 50 ? 'bg-green-50' : 
                   'bg-red-50'
                 }`}>
                   <h4 className="text-sm font-medium mb-2">Difference (±50g tolerance)</h4>
                   <div className="text-2xl font-bold">
-                    {calculateWeightDifference() !== null ? (
+                    {weightDifference !== null ? (
                       <span className={
-                        Math.abs(calculateWeightDifference()!) <= 50 ? 'text-green-600' : 'text-red-600'
+                        Math.abs(weightDifference) <= 50 ? 'text-green-600' : 'text-red-600'
                       }>
-                        {calculateWeightDifference()!.toLocaleString()} 
+                        {weightDifference.toLocaleString()} 
                         <span className="text-sm">g</span>
                       </span>
                     ) : (
@@ -235,8 +330,8 @@ useEffect(() => {
                     )}
                   </div>
                   <p className="text-xs mt-1">
-                    {calculateWeightDifference() !== null && (
-                      Math.abs(calculateWeightDifference()!) <= 50 ? 
+                    {weightDifference !== null && (
+                      Math.abs(weightDifference) <= 50 ? 
                       '✅ Within tolerance' : 
                       '⚠️ Check for discrepancies'
                     )}
@@ -248,7 +343,7 @@ useEffect(() => {
             {/* Right side - Other content */}
             <div className="w-full md:w-1/2">
               {/* Weight Difference Visualization */}
-              {calculateWeightDifference() !== null && (
+              {weightDifference !== null && (
                 <div className="mt-10">
                   <div className="flex justify-between text-xs text-gray-500 mb-1">
                     <span>Expected: {calculateExpectedWeight().toLocaleString()}g</span>
@@ -259,15 +354,15 @@ useEffect(() => {
                       className="h-4 rounded-full" 
                       style={{
                         width: `${Math.min(calculateExpectedWeight(), actualWeight!) / Math.max(calculateExpectedWeight(), actualWeight!) * 100}%`,
-                        backgroundColor: Math.abs(calculateWeightDifference()!) <= 50 ? '#4f46e5' : '#ef4444'
+                        backgroundColor: Math.abs(weightDifference) <= 50 ? '#4f46e5' : '#ef4444'
                       }}
                     ></div>
                   </div>
                   <div className="mt-2 text-center text-sm">
-                    {calculateWeightDifference()! > 50 ? (
-                      <span className="text-red-600">Scale shows {calculateWeightDifference()!.toLocaleString()}g more than expected</span>
-                    ) : calculateWeightDifference()! < -50 ? (
-                      <span className="text-red-600">Scale shows {Math.abs(calculateWeightDifference()!).toLocaleString()}g less than expected</span>
+                    {weightDifference > 50 ? (
+                      <span className="text-red-600">Scale shows {weightDifference.toLocaleString()}g more than expected</span>
+                    ) : weightDifference < -50 ? (
+                      <span className="text-red-600">Scale shows {Math.abs(weightDifference).toLocaleString()}g less than expected</span>
                     ) : (
                       <span className="text-green-600">Within acceptable range (±50g)</span>
                     )}
@@ -352,11 +447,11 @@ useEffect(() => {
                   <p className="text-2xl font-bold mt-1">
                     {actualWeight !== null ? actualWeight.toLocaleString() + 'g' : '-'}
                   </p>
-                  {calculateWeightDifference() !== null && (
+                  {weightDifference !== null && (
                     <p className={`text-sm font-medium mt-2 ${
-                      Math.abs(calculateWeightDifference()!) <= 50 ? 'text-green-300' : 'text-red-300'
+                      Math.abs(weightDifference) <= 50 ? 'text-green-300' : 'text-red-300'
                     }`}>
-                      {Math.abs(calculateWeightDifference()!) <= 50 ? (
+                      {Math.abs(weightDifference) <= 50 ? (
                         '✅ Weight matches within tolerance'
                       ) : (
                         '⚠️ Weight discrepancy detected'
