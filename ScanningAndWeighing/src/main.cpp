@@ -13,9 +13,9 @@ const char* password = "f6A40De1";
 const char* awsEndpoint = "apgkm0fe4pifa-ats.iot.us-east-1.amazonaws.com";
 
 // === MQTT Topics ===
-const char* barcodeTopic = "products/barcode/scanned";
-const char* weightTopic = "products/weight/value";
-const char* checkoutRequestTopic = "checkout/request";
+const char* barcodeTopic = "products/barcode/cart001";
+const char* weightTopic = "products/weight/cart001";
+const char* checkoutRequestTopic = "checkout/request/cart001";
 
 // === Barcode Scanner Serial ===
 SoftwareSerial scannerSerial(D7, D8);  // RX, TX
