@@ -1,262 +1,160 @@
-import React, { useState } from "react";
-import { Trash2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Trash2, Edit } from "lucide-react"; // Import Edit icon
 import { ItemProps, Product } from "../../types/Item";
+import styles from "./Item.module.css";
 
 const Item: React.FC<ItemProps> = ({
-    barcode,
-    productName,
-    productCategory,
-    productBrand,
-    productPrice,
-    productQuantity,
-    productShelfNumber,
-    removeItem,
-    updateItem,
+  barcode,
+  productName,
+  productCategory,
+  productBrand,
+  productPrice,
+  productQuantity,
+  productShelfNumber,
+  productDescription,
+  productRowNumber,
+  productWeight,
+  productImage,
+  removeItem,
+  updateItem,
 }) => {
-    const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string>("https://thumbs.dreamstime.com/b/art-illustration-317105366.jpg");
 
-    return (
-        <div
-            style={{
-                background: "white",
-                borderRadius: "20px",
-                padding: "10px",
-                boxShadow: hovered
-                    ? "0 12px 32px rgba(0, 0, 0, 0.15)"
-                    : "0 4px 16px rgba(0, 0, 0, 0.2)",
-                transform: hovered ? "translateY(-4px)" : "translateY(0)",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                border: "1px solid rgba(240, 240, 240, 1)",
-                position: "relative",
-                overflow: "hidden",
-            }}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
-            {/* Header with Product Name and Delete Button */}
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "6px",
-                    marginLeft: "6px",
-                }}
-            >
-                <h3
-                    style={{
-                        fontSize: "18px",
-                        fontWeight: 600,
-                        color: "#1a1a1a",
-                        margin: 0,
-                        lineHeight: "1.3",
-                        flex: 1,
-                    }}
-                    title={productName}
-                >
-                    {productName}
-                </h3>
+  useEffect(() => {
+    if (productImage instanceof File) {
+      const imageUrl = URL.createObjectURL(productImage);
+      setImageSrc(imageUrl);
+      return () => URL.revokeObjectURL(imageUrl);
+    } else if (typeof productImage === 'string' && productImage.startsWith('http')) {
+      setImageSrc(productImage);
+    }
+  }, [productImage]);
 
-                <button
-                    onClick={() => removeItem(barcode)}
-                    title="Delete item"
-                    style={{
-                        backgroundColor: "rgba(0, 0, 0, 0.27)",
-                        border: "none",
-                        borderRadius: "12px",
-                        flexShrink: 0,
-                        padding: "8px",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(255, 65, 65, 0.85)";
-                        e.currentTarget.style.transform = "scale(1.05)";
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.27)";
-                        e.currentTarget.style.transform = "scale(1)";
-                    }}
-                >
-                    <Trash2 size={16} color="rgb(255, 255, 255)" strokeWidth={2} />
-                </button>
-            </div>
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = Number(e.target.value);
+    const updatedProduct: Product = {
+      barcode,
+      productName: productName || '',
+      productCategory,
+      productBrand,
+      productPrice,
+      productQuantity: newQuantity,
+      productShelfNumber,
+      productDescription,
+      productRowNumber: Number(productRowNumber),
+      productWeight: Number(productWeight),
+      productImage: productImage,
+    };
+    updateItem(updatedProduct);
+  };
 
-            {/* Brand and Category */}
-            <div style={{ marginBottom: "8px", marginLeft: "6px" }}>
-                <div style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
-                    <span
-                        style={{
-                            fontSize: "12px",
-                            fontWeight: 500,
-                            color: "#64748b",
-                            backgroundColor: "#f1f5f9",
-                            padding: "2px 6px",
-                            borderRadius: "6px",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.5px",
-                        }}
-                    >
-                        {productBrand}
-                    </span>
-                    <span
-                        style={{
-                            fontSize: "12px",
-                            fontWeight: 500,
-                            color: "#64748b",
-                            backgroundColor: "#f1f5f9",
-                            padding: "2px 6px",
-                            borderRadius: "6px",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.5px",
-                        }}
-                    >
-                        {productCategory}
-                    </span>
-                </div>
-            </div>
+  const handleEditClick = () => {
+    // When the edit button is clicked, we'll trigger an update.
+    // For a full "edit" functionality, you might open a modal or navigate
+    // to an edit page, passing the current product data.
+    // For this example, we'll just trigger updateItem with current data.
+    // In a real scenario, you'd likely have a form to collect updated data.
+    const productToEdit: Product = {
+      barcode,
+      productName: productName || '',
+      productCategory,
+      productBrand,
+      productPrice,
+      productQuantity,
+      productShelfNumber,
+      productDescription,
+      productRowNumber: Number(productRowNumber),
+      productWeight: Number(productWeight),
+      productImage: productImage,
+    };
+    updateItem(productToEdit); // This will effectively "save" current state or prompt an edit
+  };
 
-            {/* Image Placeholder */}
-            <div
-                style={{
-                    marginBottom: "8px",
-                    position: "relative",
-                    overflow: "hidden",
-                    borderRadius: "16px",
-                }}
-            >
-                <img
-                    src="https://via.placeholder.com/300x180/e2e8f0/64748b?text=No+Image+Available"
-                    alt="Product image not available"
-                    style={{
-                        width: "100%",
-                        height: "180px",
-                        objectFit: "cover",
-                        borderRadius: "16px",
-                        transition: "transform 0.3s ease",
-                        transform: hovered ? "scale(1.02)" : "scale(1)",
-                    }}
-                />
-            </div>
-
-            {/* Price */}
-            <div
-                style={{
-                    marginBottom: "8px",
-                    marginLeft: "6px",
-                }}
-            >
-                <span
-                    style={{
-                        fontSize: "20px",
-                        fontWeight: 700,
-                        color: "#059669",
-                    }}
-                >
-                    ${productPrice?.toFixed(2)}
-                </span>
-            </div>
-
-            {/* Barcode */}
-            <div
-                style={{
-                    marginBottom: "8px",
-                    marginLeft: "6px",
-                }}
-            >
-                <span
-                    style={{
-                        fontSize: "12px",
-                        fontWeight: 500,
-                        color: "#64748b",
-                        fontFamily: "monospace",
-                    }}
-                >
-                    Barcode: {barcode}
-                </span>
-            </div>
-
-            {/* Shelf Number */}
-            <div
-                style={{
-                    marginBottom: "8px",
-                    marginLeft: "6px",
-                }}
-            >
-                <span
-                    style={{
-                        fontSize: "12px",
-                        fontWeight: 500,
-                        color: "#64748b",
-                    }}
-                >
-                    Shelf: {productShelfNumber}
-                </span>
-            </div>
-
-            {/* Quantity Input */}
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "rgba(0, 0, 0, 0.15)",
-                    padding: "6px 6px",
-                    borderRadius: "12px",
-                }}
-            >
-                <span
-                    style={{
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        color: "rgb(111, 111, 111)",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.5px",
-                        marginLeft: "6px",
-                    }}
-                >
-                    Quantity
-                </span>
-
-                <input
-                    title="Item Quantity"
-                    type="number"
-                    value={productQuantity}
-                    onChange={(e) =>
-                        updateItem({
-                            barcode,
-                            productName,
-                            productCategory,
-                            productBrand,
-                            productPrice,
-                            productQuantity: Number(e.target.value),
-                            productShelfNumber,
-                        } as Product)
-                    }
-                    min="0"
-                    style={{
-                        width: "80px",
-                        padding: "8px 12px",
-                        border: "2px solid #e2e8f0",
-                        borderRadius: "8px",
-                        textAlign: "center",
-                        fontSize: "16px",
-                        fontWeight: 600,
-                        backgroundColor: "white",
-                        color: "#1e293b",
-                        outline: "none",
-                        transition: "border-color 0.2s ease",
-                    }}
-                    onFocus={(e) => {
-                        e.target.style.borderColor = "#3b82f6";
-                    }}
-                    onBlur={(e) => {
-                        e.target.style.borderColor = "#e2e8f0";
-                    }}
-                />
-            </div>
+  return (
+    <div
+      className={`${styles.card} ${hovered ? styles.cardHovered : ""}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className={styles.header}>
+        <h3 className={styles.title} title={productName}>
+          {productName}
+        </h3>
+        <div className={styles.actionButtons}>
+          <button
+            onClick={handleEditClick}
+            title="Edit item"
+            className={styles.editButton}
+          >
+            <Edit size={16} color="currentColor" strokeWidth={2} />
+          </button>
+          <button
+            onClick={() => removeItem(barcode)}
+            title="Delete item"
+            className={styles.deleteButton}
+          >
+            <Trash2 size={16} color="currentColor" strokeWidth={2} />
+          </button>
         </div>
-    );
+      </div>
+
+      <div className={styles.imageWrapper}>
+        <img
+          src={imageSrc}
+          alt={productName || "Product image"}
+          className={styles.image}
+          onError={(e) => {
+            const fallback = "https://thumbs.dreamstime.com/b/art-illustration-317105366.jpg";
+            if ((e.target as HTMLImageElement).src !== fallback) {
+              (e.target as HTMLImageElement).src = fallback;
+            }
+          }}
+        />
+
+        {hovered && (
+          <div className={styles.imageOverlay}>
+            <p className={styles.descriptionOverlay}>{productDescription}</p>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.details}>
+        <div className={styles.tagGroup}>
+          {productCategory && (
+            <span className={styles.tag}>Category: {productCategory}</span>
+          )}
+          {productBrand && (
+            <span className={styles.tag}>Brand: {productBrand}</span>
+          )}
+        </div>
+
+        <div className={styles.infoGrid}>
+          <div className={styles.infoItem}>
+            <span className={styles.label}>Price:</span>
+            <span className={styles.value}>Rs. {productPrice?.toFixed(2)}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.label}>Barcode:</span>
+            <span className={styles.value}>{barcode}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.label}>Location:</span>
+            <span className={styles.value}>Shelf {productShelfNumber}, Row {productRowNumber}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.label}>Weight:</span>
+            <span className={styles.value}>{productWeight} kg</span>
+          </div>
+        </div>
+
+        <div className={styles.quantityControl}>
+          <label htmlFor={`quantity-${barcode}`} className={styles.quantityLabel}>Quantity:</label>
+          <span className={styles.value}>{productQuantity}</span>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Item;

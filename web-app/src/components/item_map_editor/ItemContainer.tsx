@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Item, ItemContainerProps } from "../../types/Item";
 import { useItemContext } from "../../hooks/context/useItemContext";
+import styles from "./ItemContainer.module.css"; // Import the CSS Module
 
 /**
  * ItemContainer - Grid-Based Item Organization Component
@@ -49,16 +50,9 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
         Array.from({ length: rows }, () => Array.from({ length: cols }, () => []));
 
     return (
-        <div style={{ width: "100%" }}>
+        <div className={styles.itemContainerWrapper}>
             {/* Grid control buttons section */}
-            <div
-                style={{
-                    display: "flex",
-                    gap: "12px",
-                    flexWrap: "wrap",
-                    marginBottom: "20px",
-                }}
-            >
+            <div className={styles.gridControls}>
                 {[
                     { label: "Add Row", onClick: () => addRow(edge), disabled: false },
                     {
@@ -91,29 +85,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                         key={index}
                         onClick={btn.onClick}
                         disabled={btn.disabled}
-                        style={{
-                            padding: "10px 16px",
-                            borderRadius: "8px",
-                            border: "none",
-                            backgroundColor: btn.disabled
-                                ? "rgb(224, 224, 224)"
-                                : "rgb(3, 160, 222)",
-                            color: btn.disabled ? "#9e9e9e" : "#fff",
-                            fontWeight: 500,
-                            fontSize: "14px",
-                            cursor: btn.disabled ? "not-allowed" : "pointer",
-                            transition: "background-color 0.2s, transform 0.2s",
-                        }}
-                        onMouseOver={(e) => {
-                            e.currentTarget.style.backgroundColor = btn.disabled
-                                ? "rgb(224, 224, 224)"
-                                : "rgb(2, 141, 196)";
-                        }}
-                        onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = btn.disabled
-                                ? "rgb(224, 224, 224)"
-                                : "rgb(3, 160, 222)";
-                        }}
+                        className={`${styles.controlButton} ${btn.disabled ? styles.controlButtonDisabled : ''}`}
                     >
                         {btn.label}
                     </button>
@@ -122,15 +94,15 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
 
             {/* Main grid container with dynamic row sizing */}
             <div
+                className={styles.mainGrid}
                 style={{
-                    display: "grid",
-                    gridTemplateRows: `repeat(${rows}, 1fr)`,
-                    gap: "16px",
+                    // This remains inline because `rows` is a dynamic prop value.
+                    gridTemplateRows: `repeat(${cells.length}, 1fr)`,
                 }}
             >
                 {/* Row iteration with flex layout for columns */}
                 {cells.map((row, rowIndex) => (
-                    <div key={rowIndex} style={{ display: "flex", gap: "16px" }}>
+                    <div key={rowIndex} className={styles.gridRow}>
                         {row.map((_, colIndex) => {
                             const isSelected =
                                 selectedCell?.row === rowIndex &&
@@ -145,31 +117,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                                     onClick={() =>
                                         setSelectedCell({ row: rowIndex, col: colIndex })
                                     }
-                                    style={{
-                                        width: "100%",
-                                        backgroundColor: dragging
-                                            ? "rgba(108, 255, 67, 0.34)"
-                                            : isSelected
-                                                ? "rgba(1, 221, 255, 0.15)"
-                                                : "rgb(255, 255, 255)",
-                                        color: "#333",
-                                        borderRadius: "8px",
-                                        cursor: "pointer",
-                                        boxShadow:
-                                            "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08)",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        border: `1px solid ${dragging
-                                                ? "rgb(63, 218, 20)"
-                                                : isSelected
-                                                    ? "rgb(1, 221, 255)"
-                                                    : "rgba(0, 0, 0, 0.19)"
-                                            }`,
-                                        flexDirection: "column",
-                                        padding: "16px",
-                                        transition: "all 0.2s ease-in-out",
-                                    }}
+                                    className={`${styles.gridCell} ${dragging ? styles.gridCellDragging : ''} ${isSelected ? styles.gridCellSelected : ''}`}
                                 >
                                     {/* Drop zone for drag-and-drop operations */}
                                     <div
@@ -180,20 +128,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                                             );
                                             handleDropOnCell(e, edge, rowIndex, colIndex);
                                         }}
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "row", // Changed from column to row for horizontal layout
-                                            gap: "8px",
-                                            width: "100%",
-                                            height: "100%",
-                                            alignItems: "center",
-                                            justifyContent: "flex-start", // Align items to the start
-                                            padding: "12px",
-                                            borderRadius: "6px",
-                                            backgroundColor: "transparent",
-                                            transition: "all 0.2s",
-                                            overflowX: "auto", // Allow horizontal scrolling if needed
-                                        }}
+                                        className={styles.dropZone}
                                         data-row={rowIndex}
                                         data-col={colIndex}
                                     >
@@ -220,65 +155,29 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
                                                         );
                                                     }}
                                                     onDragEnd={() => setDragging(null)}
-                                                    style={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "space-between",
-                                                        padding: "8px 12px",
-                                                        backgroundColor: "rgb(0, 192, 226)",
-                                                        color: "white",
-                                                        borderRadius: "6px",
-                                                        fontSize: "14px",
-                                                        cursor: "grab",
-                                                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                                        maxWidth: "200px", // Set a max width to prevent one item from taking too much space
-                                                        minWidth: "120px", // Minimum width for better appearance
-                                                        userSelect: "none",
-                                                        transition:
-                                                            "transform 0.15s ease, box-shadow 0.15s ease",
-                                                    }}
-                                                    onMouseOver={(e) => {
-                                                        e.currentTarget.style.transform =
-                                                            "translateY(-2px)";
-                                                        e.currentTarget.style.boxShadow =
-                                                            "0 4px 6px rgba(0, 0, 0, 0.1)";
-                                                    }}
-                                                    onMouseOut={(e) => {
-                                                        e.currentTarget.style.transform = "translateY(0)";
-                                                        e.currentTarget.style.boxShadow =
-                                                            "0 2px 4px rgba(0, 0, 0, 0.1)";
-                                                    }}
+                                                    className={styles.gridItem}
                                                 >
-                                                    <div
-                                                        style={{
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            gap: "8px",
-                                                            maxWidth: "80%", // Allow text to take most of the space
-                                                            overflow: "hidden",
-                                                            textOverflow: "ellipsis",
-                                                            whiteSpace: "nowrap", // Prevent text from wrapping
-                                                        }}
-                                                    >
+                                                    <div className={styles.itemName}>
                                                         <span>{item.name}</span>
                                                     </div>
                                                     <Trash2
                                                         size={16}
-                                                        onClick={(e) =>
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Prevent cell selection when clicking trash
                                                             handleRemoveItem(
                                                                 e,
                                                                 edge,
                                                                 rowIndex,
                                                                 colIndex,
                                                                 itemIndex
-                                                            )
-                                                        }
-                                                        style={{ cursor: "pointer", flexShrink: 0 }}
+                                                            );
+                                                        }}
+                                                        className={styles.removeItemIcon}
                                                     />
                                                 </div>
                                             ))
                                         ) : (
-                                            <span style={{ color: "#aaa", fontSize: "14px" }}>
+                                            <span className={styles.dropPlaceholder}>
                                                 Drop items here
                                             </span>
                                         )}

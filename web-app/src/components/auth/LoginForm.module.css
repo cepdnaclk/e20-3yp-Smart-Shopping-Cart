@@ -1,0 +1,46 @@
+.forgotPasswordContainer {
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.forgotPasswordButton {
+  display: flex;
+  padding: 0;
+  background: none;
+  align-self: flex-start;
+  border: none;
+  color: #2a41e8;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.forgotPasswordButton:hover {
+  color: #1e30c2;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 16px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.disabledButton {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+.activeButton {
+  background-color: #2a41e8;
+}
+
+.activeButton:hover {
+  background-color: #1e30c2;
+}

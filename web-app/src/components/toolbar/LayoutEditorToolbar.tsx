@@ -6,13 +6,13 @@ import { useFixtureContext } from "../../hooks/context/useFixtureContext";
 import { useItemContext } from "../../hooks/context/useItemContext";
 import { useNodeContext } from "../../hooks/context/useNodeContext";
 
+import styles from './LayoutEditorToolbar.module.css';
+
 /**
  * LayoutEditorToolbar - Layout Editor Action Bar
  *
  * Provides fixture management controls and mode switching for the layout editor.
  * Includes add/delete fixture operations, edit mode toggle, and data persistence.
- *
- * @component
  */
 
 const LayoutEditorToolbar: React.FC = () => {
@@ -29,10 +29,6 @@ const LayoutEditorToolbar: React.FC = () => {
 	const { setSelectedNode } = useNodeContext();
 	const { itemMap } = useItemContext();
 
-	/**
-	 * Resets selection states when switching modes
-	 * @param e - Event on selecting from the dropdown
-	 */
 	const handleModeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const newMode = e.target.value;
 		setMode(newMode);
@@ -42,47 +38,21 @@ const LayoutEditorToolbar: React.FC = () => {
 	};
 
 	return (
-		<div style={{ display: "flex", alignItems: "center" }}>
+		<div className={styles.toolbarContainer}>
 			{/* Add fixture button */}
 			<button
 				onClick={addFixture}
-				style={{
-					padding: "10px 16px",
-					border: "2px solid #ddd",
-					borderRadius: "6px",
-					color: "rgb(102, 102, 102)",
-					backgroundColor: "rgb(255, 255, 255)",
-					cursor: "pointer",
-					fontSize: "14px",
-					fontWeight: 500,
-					marginRight: "10px",
-					transition: "background-color 0.2s",
-					display: "flex",
-					alignItems: "center",
-				}}
+				className={styles.addButton}
 				title="Add Fixture"
 			>
 				<Plus size={16} color="rgb(102, 102, 102)" strokeWidth={2} />
 			</button>
 
-			{/* Delete fixture button - disabled when no fixture selected */}
+			{/* Delete fixture button */}
 			<button
 				onClick={deleteFixture}
 				disabled={selectedFixtureId === null}
-				style={{
-					backgroundColor:
-						selectedFixtureId === null
-							? "rgb(224, 224, 224)"
-							: "rgb(255, 255, 255)",
-					color: selectedFixtureId === null ? "rgba(153, 153, 153, 1)" : "rgb(102, 102, 102)",
-					border: "2px solid #ddd",
-					borderRadius: "6px",
-					cursor: selectedFixtureId === null ? "not-allowed" : "pointer",
-					fontSize: "14px",
-					fontWeight: 500,
-					marginRight: "10px",
-					transition: "background-color 0.2s",
-				}}
+				className={`${styles.deleteButton} ${selectedFixtureId === null ? styles.disabled : ''}`}
 				title="Delete Selected"
 			>
 				<Trash2
@@ -92,26 +62,13 @@ const LayoutEditorToolbar: React.FC = () => {
 				/>
 			</button>
 
-			{/* Mode selection dropdown for Object/Edit mode switching */}
+			{/* Mode selection dropdown */}
 			<select
 				title="Select Mode"
 				disabled={selectedFixtureId === null}
 				value={mode}
 				onChange={handleModeChange}
-				style={{
-					padding: "10px 12px",
-					fontSize: "14px",
-					fontWeight: 500,
-					border: "2px solid #ddd",
-					borderRadius: "6px",
-					color: "rgb(102, 102, 102)",
-					backgroundColor:
-						selectedFixtureId === null
-							? "rgb(224, 224, 224)"
-							: "rgb(255, 255, 255)",
-					cursor: selectedFixtureId === null ? "not-allowed" : "pointer",
-					marginRight: "10px",
-				}}
+				className={`${styles.modeSelect} ${selectedFixtureId === null ? styles.disabled : ''}`}
 			>
 				<option id="Object Mode" value="Object Mode">
 					Object Mode
@@ -121,46 +78,16 @@ const LayoutEditorToolbar: React.FC = () => {
 				</option>
 			</select>
 
-			{/* Save changes button with data persistence */}
+			{/* Save changes button */}
 			<button
 				title="save"
 				onClick={() => {
 					saveLayoutData(itemMap, fixtures);
 				}}
-				style={{
-					padding: "8px 12px",
-					fontSize: "14px",
-					fontWeight: 500,
-					border: "2px solid #ddd",
-					borderRadius: "6px",
-					color: "rgb(102, 102, 102)",
-					backgroundColor: "rgb(255, 255, 255)",
-					cursor: "pointer",
-					marginRight: "10px",
-				}}
+				className={styles.saveButton}
 			>
 				<Save size={17} color="rgb(102, 102, 102)" strokeWidth={2} />
 			</button>
-
-			{/* Clear all data button with confirmation styling */}
-			{/* <button
-        title="Clear All Fixtures and Items"
-        onClick={() => {
-          clearStoredData();
-        }}
-        style={{
-          padding: "10px 12px",
-          fontSize: "14px",
-          fontWeight: 500,
-          border: "2px solid #ddd",
-          borderRadius: "6px",
-          color: "rgb(102, 102, 102)",
-          backgroundColor: "rgb(255, 255, 255)",
-          cursor: "pointer",
-        }}
-      >
-        Clear All
-      </button> */}
 		</div>
 	);
 };

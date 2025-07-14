@@ -1,0 +1,231 @@
+/* Item.module.css */
+
+/* Card Container */
+.card {
+  background: #ffffff;
+  border-radius: 12px; /* Slightly less rounded than 20px for modern feel */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Softer shadow */
+  border: 1px solid #f0f0f0; /* Lighter border */
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Simplified transition */
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHovered {
+  transform: translateY(-5px); /* More subtle lift */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+/* Header Section */
+.header {
+  padding: 1rem 1.25rem; /* Adjusted padding for better spacing */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0; /* Separator for header */
+}
+
+.title {
+  font-size: 1.25rem; /* Using rem for better scaling */
+  font-weight: 600;
+  color: #333; /* Darker, clearer text */
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  line-height: 1.3;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem; /* Space between buttons */
+}
+
+.editButton,
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem; /* Consistent padding */
+  border-radius: 50%; /* Make them circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  color: #666; /* Default icon color */
+}
+
+.editButton:hover {
+  background-color: #e0f2f7; /* Light blue */
+  color: #2196f3; /* Blue */
+}
+
+.deleteButton:hover {
+  background-color: #ffebee; /* Light red */
+  color: #ef5350; /* Red */
+}
+
+/* Image Section */
+.imageWrapper {
+  width: 100%;
+  padding-top: 60%; /* Aspect ratio 5:3 (180/300 * 100%) */
+  position: relative;
+  overflow: hidden;
+  background-color: #f8f8f8; /* Placeholder background */
+  border-radius: 0; /* Image wrapper itself doesn't need rounded corners, image inside handles it */
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensures the whole image is visible, scales down if needed */
+  border-radius: 0; /* Image itself can be full within wrapper, overlay will handle rounded top corners */
+  transition: transform 0.3s ease;
+}
+
+/* No .imageHovered needed directly on image as the cardHovered already handles it through .cardHovered .image */
+.cardHovered .image {
+  transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Allows clicks to pass through to the card */
+  /* Apply top border radius to overlay to match card's top radius if image doesn't fill */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.cardHovered .imageOverlay {
+  opacity: 1;
+  pointer-events: auto; /* Re-enable pointer events on hover */
+}
+
+.descriptionOverlay {
+  color: #fff;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+  max-height: 90%;
+  overflow-y: auto; /* Allow scrolling for long descriptions */
+  /* Remove old .description specific styles as it's replaced by this overlay */
+}
+
+/* Details Section (replaces .meta, .price, .barcode, .shelf, .row, .weight) */
+.details {
+  padding: 1rem 1.25rem; /* Adjusted padding */
+  flex-grow: 1; /* Allows details to take remaining vertical space */
+  display: flex;
+  flex-direction: column;
+}
+
+.tagGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem; /* More space before info grid */
+}
+
+.tag {
+  background-color: #e6f7ff; /* Light blue background for tags */
+  color: #1890ff; /* Blue text for tags */
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px; /* Pill shape */
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: none; /* Remove uppercase for better readability as "Category: " is already clear */
+  letter-spacing: normal;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 0.75rem 1.5rem; /* Row gap and column gap */
+  margin-bottom: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.8rem;
+  color: #777; /* Softer label color */
+  margin-bottom: 0.2rem;
+  font-weight: 500;
+}
+
+.value {
+  font-size: 0.95rem; /* Slightly larger value font */
+  color: #333;
+  font-weight: 600;
+}
+
+/* Specific styling for price value */
+.infoItem:first-child .value { /* Assuming price is the first info item */
+  font-size: 1.1rem; /* Make price stand out a bit more */
+  color: #059669; /* Green for price */
+}
+
+/* Quantity Control */
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto; /* Pushes to the bottom */
+  padding-top: 1rem; /* Space from elements above */
+  border-top: 1px solid #f0f0f0; /* Separator for quantity control */
+}
+
+.quantityLabel {
+  font-size: 1rem; /* More prominent label */
+  color: #333;
+  font-weight: 500;
+  text-transform: capitalize; /* "Quantity" looks better than "QUANTITY" */
+  letter-spacing: normal;
+}
+
+.quantityInput {
+  width: 70px; /* Slightly smaller width */
+  padding: 0.5rem 0.75rem; /* Adjusted padding */
+  border: 1px solid #d9d9d9; /* Lighter border */
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: 600;
+  background-color: #fff; /* Explicit white background */
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -moz-appearance: textfield; /* Remove arrows in Firefox */
+  appearance: textfield; 
+}
+
+.quantityInput:focus {
+  border-color: #1890ff; /* Blue focus color */
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); /* Soft blue shadow on focus */
+}
+
+/* Hide arrows for number input in Chrome, Safari, Edge, Opera */
+.quantityInput::-webkit-outer-spin-button,
+.quantityInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

@@ -1,0 +1,19 @@
+/* Container for the entire layout editor component */
+.layoutEditorContainer {
+    display: flex;
+    flex-direction: column;
+    /* Other full-screen or positioning styles might go here if needed */
+}
+
+/* Wrapper for the Konva Stage, providing necessary spacing */
+.canvasWrapper {
+    margin-top: 50px; /* Adjust for a fixed header/toolbar */
+    flex: 1; /* Allows the canvas wrapper to take up available space */
+}
+
+/* Styles applied directly to the Konva Stage element */
+.konvaStage {
+    border-radius: 10px;
+    background: rgb(255, 255, 255);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}

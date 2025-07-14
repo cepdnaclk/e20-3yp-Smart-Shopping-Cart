@@ -1,14 +1,14 @@
-import { Product } from "../../types/Item";
+import { Product, sampleProducts } from "../../types/Item";
 import api from "./api"; // Assuming your configured axios instance
 
 // Define interface for Product creation payload (without barcode, includes image as File)
 export interface AddProductPayload extends Omit<Product, 'barcode' | 'productImage'> {
-    productImage?: File; // For upload
+    productImage?: File | string; // For upload
 }
 
 // Define interface for Product update payload (includes barcode, includes image as File)
 export interface UpdateProductPayload extends Omit<Product, 'productImage'> {
-    productImage?: File; // For upload
+    productImage?: File | string; // For upload
 }
 
 export const productService = {
@@ -21,14 +21,7 @@ export const productService = {
      * @returns A promise that resolves to the success message from the API.
      * @throws Error if the API call fails.
      */
-    async addProduct(productData: AddProductPayload, productImage?: File): Promise<string> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
-
+    async addProduct(productData: AddProductPayload, productImage?: File | string): Promise<string> {
         const formData = new FormData();
 
         // Append all product data fields
@@ -57,14 +50,7 @@ export const productService = {
      * @returns A promise that resolves to the success message from the API.
      * @throws Error if the API call fails.
      */
-    async updateProduct(productData: UpdateProductPayload, productImage?: File): Promise<string> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
-
+    async updateProduct(productData: UpdateProductPayload, productImage?: File | string): Promise<string> {
         const formData = new FormData();
 
         // Append all product data fields
@@ -92,13 +78,6 @@ export const productService = {
      * @throws Error if the API call fails.
      */
     async deleteProduct(barcode: string): Promise<string> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
-
         const response = await api.delete(`/product/auth/delete?barcode=${barcode}`);
         return response.data.message; // Assuming success message is in response.data.message
     },
@@ -110,13 +89,6 @@ export const productService = {
      * @throws Error if the API call fails.
      */
     async getProductByLastScanned(): Promise<Product> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
-
         const response = await api.get<Product>('/product/all/get');
         return response.data;
     },
@@ -126,17 +98,16 @@ export const productService = {
      * @returns A promise that resolves to an array of product data.
      * @throws Error if the API call fails.
      */
-    async getAllProducts(): Promise<Product[]> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
-
+   async getAllProducts(): Promise<Product[]> {
+    try {
         const response = await api.get<Product[]>('/product/all/all');
         return response.data;
-    },
+    } catch (error) {
+        console.error("Failed to fetch all products. Using sample data as fallback:", error);
+        // Fallback to sample data for development
+        return sampleProducts; // <<< Use sample data here
+    }
+},
 
     /**
      * Gets products filtered by category.
@@ -145,13 +116,6 @@ export const productService = {
      * @throws Error if the API call fails.
      */
     async getProductsByCategory(category: string): Promise<Product[]> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
-
         const response = await api.get<Product[]>(`/product/all/by-category?category=${category}`);
         return response.data;
     },
@@ -163,13 +127,6 @@ export const productService = {
      * @throws Error if the API call fails.
      */
     async getProductsByBrand(brand: string): Promise<Product[]> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
-
         const response = await api.get<Product[]>(`/product/all/by-brand?brand=${brand}`);
         return response.data;
     },

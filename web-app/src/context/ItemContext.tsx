@@ -5,7 +5,7 @@
  */
 
 import React, { createContext, useState } from "react";
-import { InventoryItem, Item } from "../types/Item";
+import { InventoryItem, Item, Product } from "../types/Item";
 
 /**
  * Represents the state of an item being dragged
@@ -26,6 +26,10 @@ interface DraggingState {
 interface ItemContextType {
   inventoryItems: InventoryItem[];
   setInventoryItems: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
+  products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  filteredProducts: Product[];
+  setFilteredProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   itemMap: Record<string, Item[][][]>;
   setItemMap: React.Dispatch<React.SetStateAction<Record<string, Item[][][]>>>;
   dragging: DraggingState | null;
@@ -64,6 +68,8 @@ export const ItemContext = createContext<ItemContextType | undefined>(
 export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [itemMap, setItemMap] = useState<Record<string, Item[][][]>>({});
 
@@ -375,6 +381,10 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ItemContext.Provider
       value={{
+        products,
+        setProducts,
+        filteredProducts,
+        setFilteredProducts,
         inventoryItems,
         setInventoryItems,
         itemMap,

@@ -10,6 +10,9 @@ import AuthPage from "./pages/AuthPage";
 import { EditorProvider } from "./context/EditorContext";
 import DashboardPage from "./pages/DashboardPage";
 import { useAuthContext } from "./hooks/context/useAuthContext";
+import { ModalProvider } from "./context/ModalContext";
+import { ItemProvider } from "./context/ItemContext";
+import CartEntryPage from "./pages/CartEntryPage";
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -37,7 +40,11 @@ const App: React.FC = () => {
                                             path="/editor"
                                             element={
                                                 <ProtectedRoute>
-                                                    <EditorPage />
+                                                    <ItemProvider>
+                                                        <ModalProvider>
+                                                            <EditorPage />
+                                                        </ModalProvider>
+                                                    </ItemProvider>
                                                 </ProtectedRoute>
                                             }
                                         />
@@ -49,14 +56,14 @@ const App: React.FC = () => {
                                                 </ProtectedRoute>
                                             }
                                         />
-                                        {/* <Route
-                      path="/"
-                      element={
-                        <ProtectedRoute>
-                          <EditorPage />
-                        </ProtectedRoute>
-                      }
-                    /> */}
+                                        <Route
+                                            path="/counter"
+                                            element={
+                                                <ProtectedRoute>
+                                                    <CartEntryPage />
+                                                </ProtectedRoute>
+                                            }
+                                        />
                                         <Route path="*" element={<Navigate to="/" replace />} />
                                     </Routes>
                                 </NodeProvider>

@@ -1,0 +1,28 @@
+/* Styles for the full-screen overlay */
+.itemMapEditorOverlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Styles for the scrollable content area */
+.itemMapContent {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 50px; /* Space for a potential header/toolbar above */
+    padding: 20px;
+    background: rgb(255, 255, 255); /* Ensure background is white inside scroll area too */
+    border-radius: 10px;
+
+    /* Removed direct scrollbar styling from here,
+       as it's now handled by the global .scrollable-area class. */
+}

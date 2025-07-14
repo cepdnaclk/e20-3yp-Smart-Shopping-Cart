@@ -1,0 +1,73 @@
+.container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.section {
+  flex: 1;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.label {
+  align-self: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(153, 153, 153, 1);
+}
+
+.input {
+  padding: 6px 6px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.colorInput {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.button {
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  transition: background-color 0.2s;
+}
+
+.buttonPrimary {
+  background-color: rgb(3, 160, 222);
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+
+.buttonPrimary:hover {
+  background-color: rgb(2, 141, 196);
+}
+
+.buttonDisabled {
+  background-color: rgb(224, 224, 224);
+  color: rgba(153, 153, 153, 1);
+  cursor: not-allowed;
+}
+
+.footer {
+  flex: 1;
+  flex-direction: column;
+  align-content: flex-end;
+}

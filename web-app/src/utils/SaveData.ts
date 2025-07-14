@@ -1,7 +1,7 @@
 import { inventoryService } from "../hooks/services/inventoryService";
 import { layoutService } from "../hooks/services/layoutService";
 import Fixture from "../types/Fixture";
-import { Item, InventoryItem } from "../types/Item";
+import { Item, Product } from "../types/Item";
 
 // Type aliases
 type ItemMap = Record<string, Item[][][]>;
@@ -26,9 +26,9 @@ export const saveLayoutData = async (itemMap: ItemMap, fixtures: FixturesMap) =>
  * Saves inventory items to the database
  * Provides user feedback via alert
  */
-export const saveInventoryData = async (inventoryItems: InventoryItem[]) => {
+export const saveInventoryData = async (products: Product[]) => {
   try {
-    await inventoryService.saveInventoryItems(inventoryItems);
+    await inventoryService.saveInventoryItems(products);
     console.log("Inventory items saved to database");
     alert("Inventory items saved!");
   } catch (error) {

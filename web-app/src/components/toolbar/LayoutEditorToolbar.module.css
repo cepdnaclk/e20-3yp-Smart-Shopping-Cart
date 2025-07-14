@@ -1,0 +1,67 @@
+.toolbarContainer {
+	display: flex;
+	align-items: center;
+}
+
+.addButton {
+	padding: 10px 16px;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	color: rgb(102, 102, 102);
+	background-color: rgb(255, 255, 255);
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	margin-right: 10px;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+}
+
+.deleteButton {
+	background-color: rgb(255, 255, 255);
+	color: rgb(102, 102, 102);
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	margin-right: 10px;
+	transition: background-color 0.2s;
+}
+
+.deleteButton.disabled {
+	background-color: rgb(224, 224, 224);
+	color: rgba(153, 153, 153, 1);
+	cursor: not-allowed;
+}
+
+.modeSelect {
+	padding: 10px 12px;
+	font-size: 14px;
+	font-weight: 500;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	color: rgb(102, 102, 102);
+	background-color: rgb(255, 255, 255);
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.modeSelect.disabled {
+	background-color: rgb(224, 224, 224);
+	cursor: not-allowed;
+	color: rgba(153, 153, 153, 1);
+}
+
+.saveButton {
+	padding: 8px 12px;
+	font-size: 14px;
+	font-weight: 500;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	color: rgb(102, 102, 102);
+	background-color: rgb(255, 255, 255);
+	cursor: pointer;
+	margin-right: 10px;
+}

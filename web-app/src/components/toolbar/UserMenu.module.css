@@ -1,0 +1,108 @@
+/* UserMenu.module.css */
+
+.container {
+  position: relative;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.8);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  background-color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.23);
+  border-radius: 12px;
+  padding: 0;
+  min-width: 220px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  animation: slideIn 0.2s ease-out forwards;
+}
+
+.userInfo {
+  padding: 20px;
+  background: rgb(255, 255, 255);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 16px;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.userRole {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.actions {
+  padding: 12px;
+}
+
+.button {
+  width: 100%;
+  background: none;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(0, 0, 0, 1);
+}
+
+.button:hover {
+  background-color: rgba(102, 102, 102, 0.15);
+}
+
+.logoutButton {
+  color: #dc2626;
+}
+
+.logoutButton:hover {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+/* Keyframes */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

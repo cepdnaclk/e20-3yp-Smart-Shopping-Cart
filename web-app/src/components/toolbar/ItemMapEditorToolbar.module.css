@@ -1,0 +1,33 @@
+.toolbarContainer {
+	display: flex;
+	align-items: center;
+}
+
+.saveButton {
+	padding: 8px 12px;
+	font-size: 14px;
+	font-weight: 500;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	color: rgb(102, 102, 102);
+	background-color: rgb(255, 255, 255);
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+/* Uncomment for Clear All button styling
+.clearButton {
+	padding: 8px 12px;
+	font-size: 14px;
+	font-weight: 500;
+	border: none;
+	border-radius: 6px;
+	background-color: rgb(238, 56, 0);
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+.clearButton:hover {
+	background-color: rgb(208, 49, 0);
+}
+*/

@@ -1,6 +1,7 @@
 import React from 'react';
 import FormField from '../form_fields/FormField';
 import { ForgotPasswordFormData } from '../../types/Auth';
+import styles from './ForgotPasswordForm.module.css';
 
 interface ForgotPasswordFormProps {
     formData: ForgotPasswordFormData;
@@ -17,13 +18,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 }) => {
     return (
         <div>
-            <p style={{
-                fontSize: "14px",
-                color: "#666",
-                marginBottom: "20px",
-                lineHeight: "1.5",
-                textAlign: "center"
-            }}>
+            <p className={styles.infoText}>
                 Enter your username and email address to receive a reset code.
             </p>
 
@@ -51,29 +46,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
                 type="button"
                 onClick={onSubmit}
                 disabled={isLoading}
-                style={{
-                    width: "100%",
-                    padding: "16px",
-                    backgroundColor: isLoading ? "#9e9e9e" : "#2a41e8",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                    cursor: isLoading ? "not-allowed" : "pointer",
-                    transition: "all 0.2s ease",
-                    marginTop: "10px",
-                }}
-                onMouseOver={(e) => {
-                    if (!isLoading) {
-                        e.currentTarget.style.backgroundColor = "#1e30c2";
-                    }
-                }}
-                onMouseOut={(e) => {
-                    if (!isLoading) {
-                        e.currentTarget.style.backgroundColor = "#2a41e8";
-                    }
-                }}
+                className={`${styles.submitButton} ${isLoading ? styles.disabledButton : styles.activeButton}`}
             >
                 {isLoading ? "Sending Reset Code..." : "Send Reset Code"}
             </button>

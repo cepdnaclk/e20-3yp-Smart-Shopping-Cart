@@ -5,6 +5,7 @@ import { useFixtureContext } from "../../hooks/context/useFixtureContext";
 import { useAuthContext } from "../../hooks/context/useAuthContext";
 import { useItemContext } from "../../hooks/context/useItemContext";
 import { loadItemMap } from "../../utils/LoadData";
+import styles from "./ItemMapEditorManager.module.css"; // Import the CSS Module
 
 /**
  * ItemMapEditorManager - Grid-Based Item Organization Interface
@@ -24,50 +25,27 @@ const ItemMapEditorManager: React.FC = () => {
 
     useEffect(() => {
         const loadItems = async () => {
-            if (profile?.storeName != undefined && profile.role === "MANAGER") {
+            // Ensure profile and role are defined and match MANAGER
+            if (profile?.role === "MANAGER") {
                 try {
-                    const savedMap = await loadItemMap(profile.storeName);
+                    const savedMap = await loadItemMap(profile.storeName || '');
                     console.log("Initial item map loaded:", savedMap);
-                    setItemMap(savedMap || {});
+                    setItemMap(savedMap || {}); // Set the loaded map or an empty object
                 } catch (error) {
                     console.error("Error loading item map:", error);
                 }
             }
         };
-        loadItems();
-    }, [isAuthenticated]);
+        // Load items only if authenticated (prevents unnecessary calls)
+        if (isAuthenticated) {
+            loadItems();
+        }
+    }, [isAuthenticated, profile?.storeName, profile?.role, setItemMap]); // Add dependencies for useEffect
 
     return (
-        <div
-            style={{
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: "100%",
-                height: "100%",
-                background: "rgb(255, 255, 255)",
-                display: "flex",
-                flexDirection: "column",
-                padding: "20px",
-                zIndex: 998,
-                color: "#333",
-                fontFamily: "Inter, sans-serif",
-            }}
-        >
+        <div className={styles.itemMapEditorOverlay}>
             {/* Main content area with top margin and scroll capability */}
-            <div
-                style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    marginTop: "50px",
-                    padding: "20px",
-                    background: "rgb(255, 255, 255)",
-                    borderRadius: "10px",
-                    scrollbarWidth: "thin",
-                    scrollbarColor: "#aaaaaa #f0f0f0",
-                }}
-            >
+            <div className={`${styles.itemMapContent} scrollable-area`}> {/* Apply the global scrollable-area class */}
                 {/* Conditional rendering - only show when edge is selected */}
                 {selectedEdge !== null && (
                     <ItemContainer

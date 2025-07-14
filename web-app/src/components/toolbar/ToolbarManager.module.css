@@ -1,0 +1,44 @@
+.toolbarContainer {
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    z-index: 900;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #333;
+}
+
+.sidebarToggleButton {
+    padding: 10px;
+    background-color: transparent;
+    color: #333;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.sidebarToggleButton:hover {
+    background-color: #f0f0f0; /* Optional: subtle hover effect */
+}
+
+.title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.rightToolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}

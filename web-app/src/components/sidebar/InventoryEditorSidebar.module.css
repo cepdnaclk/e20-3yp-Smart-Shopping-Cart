@@ -1,0 +1,58 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  padding-bottom: 12px;
+  min-height: 0;
+}
+
+/* Reuse global scrollbar styles via scrollable-area */
+
+.categoryButton {
+  width: 100%;
+  padding: 10px 0;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.categoryButton:hover {
+  background-color: #f0f0f0;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding-top: 12px;
+  background-color: #fafafa;
+  border-top: 1px solid #ddd;
+}
+
+.openLayoutButton {
+  width: 100%;
+  padding: 10px 0;
+  color: rgb(255, 255, 255);
+  background-color: rgb(3, 160, 222);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  border: none;
+}
+
+.openLayoutButton:hover {
+  background-color: rgb(2, 141, 196);
+}

@@ -1,7 +1,7 @@
-// components/LoginForm.tsx
 import React from "react";
 import FormField from "../form_fields/FormField";
 import { LoginFormData } from "../../types/Auth";
+import styles from "./LoginForm.module.css";
 
 interface LoginFormProps {
     formData: LoginFormData;
@@ -38,26 +38,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
                 placeholder="Enter your password"
                 autoComplete="current-password"
             />
-            <div style={{ marginTop: "-10px", marginBottom: "15px" }}>
+            <div className={styles.forgotPasswordContainer}>
                 <button
                     type="button"
                     onClick={onForgotPassword}
-                    style={{
-                        display: "flex",
-                        padding: 0,
-                        background: "none",
-                        alignSelf: "flex-start",
-                        border: "none",
-                        color: "#2a41e8",
-                        fontSize: "14px",
-                        cursor: "pointer",
-                    }}
-                    onMouseOver={(e) => {
-                        e.currentTarget.style.color = "#1e30c2";
-                    }}
-                    onMouseOut={(e) => {
-                        e.currentTarget.style.color = "#2a41e8";
-                    }}
+                    className={styles.forgotPasswordButton}
                 >
                     Forgot your password?
                 </button>
@@ -66,29 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
                 type="button"
                 onClick={onSubmit}
                 disabled={isLoading}
-                style={{
-                    width: "100%",
-                    padding: "16px",
-                    backgroundColor: isLoading ? "#9e9e9e" : "#2a41e8",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                    cursor: isLoading ? "not-allowed" : "pointer",
-                    transition: "all 0.2s ease",
-                    marginTop: "10px",
-                }}
-                onMouseOver={(e) => {
-                    if (!isLoading) {
-                        e.currentTarget.style.backgroundColor = "#1e30c2";
-                    }
-                }}
-                onMouseOut={(e) => {
-                    if (!isLoading) {
-                        e.currentTarget.style.backgroundColor = "#2a41e8";
-                    }
-                }}
+                className={`${styles.submitButton} ${isLoading ? styles.disabledButton : styles.activeButton}`}
             >
                 {isLoading ? "Signing In..." : "Sign In"}
             </button>

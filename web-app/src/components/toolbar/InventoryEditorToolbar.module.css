@@ -1,0 +1,122 @@
+.toolbarContainer {
+	display: flex;
+	align-items: center;
+}
+
+.addButton {
+	padding: 10px 16px;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	color: rgb(102, 102, 102);
+	background-color: rgb(255, 255, 255);
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	margin-right: 10px;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+}
+
+.saveButton {
+	padding: 8px 12px;
+	font-size: 14px;
+	font-weight: 500;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	color: rgb(102, 102, 102);
+	background-color: rgb(255, 255, 255);
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.modalOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	-webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.modalContent {
+	background: rgba(255, 255, 255, 0.95);
+	padding: 32px;
+	border-radius: 16px;
+	width: 420px;
+	max-width: 90%;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+	transition: all 0.3s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.modalTitle {
+	font-size: 22px;
+	font-weight: 600;
+	color: rgba(34, 34, 34, 1);
+	margin: 0;
+}
+
+.inputGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.inputLabel {
+	font-weight: 500;
+	color: rgba(51, 51, 51, 1);
+}
+
+.inputField {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1px solid rgba(200, 200, 200, 1);
+	border-radius: 8px;
+	font-size: 15px;
+	background: rgba(255, 255, 255, 1);
+	color: rgba(0, 0, 0, 0.85);
+	box-sizing: border-box;
+}
+
+.modalActions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.cancelButton {
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	background-color: rgba(245, 245, 245, 1);
+	border: 1px solid rgba(220, 220, 220, 1);
+	color: rgba(80, 80, 80, 1);
+	cursor: pointer;
+}
+
+.addItemButton {
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	background-color: rgb(3, 160, 222);
+	color: rgba(255, 255, 255, 1);
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.addItemButton.disabled {
+	background-color: rgba(200, 200, 200, 1);
+	cursor: not-allowed;
+}

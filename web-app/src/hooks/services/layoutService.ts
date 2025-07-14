@@ -42,6 +42,7 @@ export const layoutService = {
      * I need the store name or some identifier to fetch the correct layout to the mobile app
      */
     async getLayout(storeName: string): Promise<{ fixtureLayout: FixturesMapService, itemMap: ItemMapService }> {
+        console.log('Attepting to load FixtureLayout and ItemMap');
         // Check for tokens before making request
         const accessToken = localStorage.getItem('access_token');
         const refreshToken = localStorage.getItem('refresh_token');

@@ -1,58 +1,54 @@
-/**
- * InventoryEditorSidebar - Inventory Panel for Item Management
- *
- * Provides a draggable inventory of items that can be added to the layout.
- * Items are displayed in a grid format with images and can be dragged
- * onto the item map editor grid.
- *
- * @component
- */
-
-import React from "react";
+import React, { useMemo } from "react";
 import { useEditorContext } from "../../hooks/context/useEditorContext";
-
+import { useItemContext } from "../../hooks/context/useItemContext";
+import styles from "./InventoryEditorSidebar.module.css";
 
 const InventoryEditorSidebar: React.FC = () => {
+  const { toggleEditor } = useEditorContext();
+  const { products, setFilteredProducts } = useItemContext();
 
-    // Using editor context to enable toggling between editors (e.g., switch to layout editor)
-    const { toggleEditor } = useEditorContext();
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((product) => {
+      if (product.productCategory) set.add(product.productCategory);
+    });
+    return Array.from(set);
+  }, [products]);
 
-    /**
-     * Initiates drag operation for an item in the inventory
-     * Sets up drag state and data transfer for drop handling
-     * @param e - Drag event
-     * @param itemInfo - Information about the item
-     */
-    return (
-        <div style={{ display: "flex", height: "100%", flexDirection: "column", alignContent: "flex-end" }}>
-            {/* Spacer to push footer button to the bottom */}
-            <div style={{ flex: 1 }} />
+  const handleFilter = (category: string | null) => {
+    if (!category) {
+      setFilteredProducts(products); // All
+    } else {
+      setFilteredProducts(products.filter(p => p.productCategory === category));
+    }
+  };
 
-            {/* Button to switch to the layout editor */}
-            <button
-                onClick={() => toggleEditor("layout")}
-                style={{
-                    width: "100%",
-                    padding: "10px 0",
-                    color: "rgb(255, 255, 255)",
-                    backgroundColor: "rgb(3, 160, 222)",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    transition: "background-color 0.2s",
-                }}
-                onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgb(2, 141, 196)";
-                }}
-                onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgb(3, 160, 222)";
-                }}
-            >
-                {"Open Layout Editor"}
-            </button>
-        </div>
-    );
+  return (
+    <div className={styles.container}>
+      <div className={styles.content + " scrollable-area"}>
+        <button onClick={() => handleFilter(null)} className={styles.categoryButton}>
+          All
+        </button>
+        {categories.map((category, index) => (
+          <button
+            key={index}
+            className={styles.categoryButton}
+            onClick={() => handleFilter(category)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+      <div className={styles.footer}>
+        <button
+          className={styles.openLayoutButton}
+          onClick={() => toggleEditor("layout")}
+        >
+          Open Layout Editor
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default InventoryEditorSidebar;

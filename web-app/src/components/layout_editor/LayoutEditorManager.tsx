@@ -4,6 +4,7 @@ import FixtureComp from "./canvas/FixtureComp";
 import { useFixtureContext } from "../../hooks/context/useFixtureContext";
 import { useAuthContext } from "../../hooks/context/useAuthContext";
 import { loadFixtureLayout } from "../../utils/LoadData";
+import styles from "./LayoutEditorManager.module.css"; // Import the CSS Module
 
 /**
  * LayoutEditorManager - Canvas-Based Layout Editor
@@ -17,19 +18,20 @@ import { loadFixtureLayout } from "../../utils/LoadData";
  * - Interactive fixture rendering
  * - Scale-based measurements (40px = 1 meter)
  *
- *  @component
+ * @component
  */
 
 const LayoutEditorManager: React.FC = () => {
-
     const { profile, isAuthenticated } = useAuthContext();
     const { fixtures, setFixtures } = useFixtureContext();
 
+    // Load fixtures on component mount or authentication state change
     useEffect(() => {
         const loadFixtures = async () => {
-            if (profile?.storeName != undefined && profile.role === "MANAGER") {
+            // Ensure profile and role are defined and match MANAGER
+            if (profile?.role === "MANAGER") {
                 try {
-                    const loadedLayout = await loadFixtureLayout(profile.storeName);
+                    const loadedLayout = await loadFixtureLayout(profile.storeName || '');
                     console.log("Initial fixtures loaded:", loadedLayout);
                     setFixtures(loadedLayout || {});
                 } catch (error) {
@@ -38,41 +40,44 @@ const LayoutEditorManager: React.FC = () => {
             }
         };
 
-        loadFixtures();
-    }, [isAuthenticated]);
+        // Load fixtures only if authenticated
+        if (isAuthenticated) {
+            loadFixtures();
+        }
+    }, [isAuthenticated, profile?.storeName, profile?.role, setFixtures]); // Added setFixtures to dependencies for completeness
 
     const [dimensions, setDimensions] = useState({
+        // Initialize dimensions safely for SSR or initial render
         width: typeof window !== "undefined" ? window.innerWidth : 800,
         height: typeof window !== "undefined" ? window.innerHeight - 50 : 600,
     });
 
+    // Handle window resize to update canvas dimensions
     useEffect(() => {
         if (typeof window === "undefined") return;
 
         const handleResize = () => {
             setDimensions({
                 width: window.innerWidth,
-                height: window.innerHeight - 50,
+                height: window.innerHeight - 50, // Subtract 50px for toolbar/header
             });
         };
 
         window.addEventListener("resize", handleResize);
+        // Clean up event listener on component unmount
         return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
 
     return (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div className={styles.layoutEditorContainer}>
             {/* Main canvas container with top margin to account for fixed toolbar */}
-            <div style={{ marginTop: "50px", flex: 1 }}>
+            <div className={styles.canvasWrapper}>
                 <Stage
+                    // Keying stage by fixtures length forces re-render if fixtures count changes
                     key={Object.keys(fixtures).length}
                     width={dimensions.width}
                     height={dimensions.height}
-                    style={{
-                        borderRadius: "10px",
-                        background: "rgb(255, 255, 255)",
-                        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.08)",
-                    }}
+                    className={styles.konvaStage} // Apply Konva stage specific styles
                 >
                     {/* Coordinate system layer - X and Y axis arrows for reference */}
                     <Layer>
