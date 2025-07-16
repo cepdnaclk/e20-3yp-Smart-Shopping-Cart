@@ -8,8 +8,8 @@
 
 // === Configuration ===
 // WiFi credentials
-const char* ssid = "Dialog 4G 672";
-const char* password = "f6A40De1";
+const char* ssid = "TCL";
+const char* password = "12345678";
 
 // AWS IoT Core endpoint
 const char* awsEndpoint = "apgkm0fe4pifa-ats.iot.us-east-1.amazonaws.com";
@@ -18,7 +18,7 @@ const char* awsEndpoint = "apgkm0fe4pifa-ats.iot.us-east-1.amazonaws.com";
 const char* topic = "products/barcode/scanned";
 
 // Barcode scanner serial
-SoftwareSerial scannerSerial(D7, D8);  // RX, TX
+SoftwareSerial scannerSerial(D5, D6);  // RX, TX
 
 // Certificate objects
 BearSSL::WiFiClientSecure espClient;

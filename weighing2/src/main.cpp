@@ -18,7 +18,7 @@ FirebaseData fbdo;
 #define DOUT D2
 #define CLK D1
 HX711 scale;
-float calibration_factor = 1028.67;
+float calibration_factor = 937.38;
 const float WEIGHT_THRESHOLD = 5.0;
 
 float lastWeight = 0;
@@ -61,8 +61,13 @@ void publishWeight(float weight) {
   fbdo.setBSSLBufferSize(512, 256);
   char path[50];
   snprintf(path, sizeof(path), "/carts/%s/weight", cartId);
-  Firebase.setFloat(fbdo, path, weight);
+  if (Firebase.setFloat(fbdo, path, weight)) {
+    Serial.printf("Published weight: %.2f\n", weight);
+  } else {
+    Serial.printf("Firebase publish failed: %s\n", fbdo.errorReason().c_str());
+  }
 }
+
 
 void setup() {
   Serial.begin(115200);

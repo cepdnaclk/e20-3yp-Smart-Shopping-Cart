@@ -1,0 +1,326 @@
+/* === Page Layout === */
+.checkout-page {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(to right, #f0fdf4, #ffffff);
+  font-family: 'Inter', sans-serif;
+}
+
+/* === Left Panel: Cart Image + Payment === */
+.checkout-left {
+  flex: 1;
+  background: url("https://businesspost.ng/wp-content/uploads/2020/09/Smart-Shopping.jpg") no-repeat center 100px;
+  background-size: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 40px 20px;
+  position: relative;
+}
+
+/* Payment Options Box */
+.payment-options {
+  background: #ffffffcc;
+  backdrop-filter: blur(4px);
+  padding: 20px;
+  border-radius: 16px;
+  width: 80%;
+  margin-bottom: 60px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.payment-options h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.payment-options label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.payment-options input {
+  margin-right: 10px;
+}
+
+/* === Right Panel: Cart and Bill === */
+.checkout-right {
+  flex: 2;
+  padding: 40px;
+  background: #fff;
+  border-left: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+/* === Header === */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(to right, #10b981, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cart-button {
+  position: relative;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #10b981;
+  color: #fff;
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-button {
+  padding: 8px 16px;
+  background: linear-gradient(to right, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* === Cart Section === */
+.cart-section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.cart-id-input {
+  padding: 12px 16px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+.loading {
+  padding: 20px;
+  font-weight: 500;
+}
+
+.error-message {
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.empty-cart {
+  padding: 20px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-cart-img {
+  width: 180px;
+  margin: 0 auto 16px;
+  display: block;
+}
+
+.cart-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.cart-item:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-info {
+  flex: 2;
+}
+
+.item-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.item-controls button {
+  padding: 4px 10px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.item-total {
+  font-weight: 600;
+  width: 80px;
+  text-align: right;
+}
+
+.remove-btn {
+  background: none;
+  color: #ef4444;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.subtotal {
+  margin-top: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* === Buttons === */
+.release-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(to right, #10b981, #059669);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.release-btn:hover {
+  background: linear-gradient(to right, #059669, #047857);
+}
+
+/* === Popups === */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  max-width: 400px;
+  text-align: center;
+  animation: popup-in 0.3s ease-out;
+}
+
+.popup h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.popup p {
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.new-cart-btn {
+  background: #10b981;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 9999px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* === Animations === */
+@keyframes popup-in {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1.5s infinite;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease both;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

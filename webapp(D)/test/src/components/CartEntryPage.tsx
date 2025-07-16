@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, set } from 'firebase/database';
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
@@ -23,6 +23,7 @@ const CartEntry: React.FC = () => {
   const [showVerificationPopup, setShowVerificationPopup] = useState(false);
   const [weightDifference, setWeightDifference] = useState<number | null>(null);
   const [verificationStatus, setVerificationStatus] = useState<'success' | 'failed' | null>(null);
+  const [hasContinueAfterMismatch, setHasContinueAfterMismatch] = useState(false);
 
   // Debounce cart ID input
   useEffect(() => {
@@ -149,6 +150,7 @@ const CartEntry: React.FC = () => {
 
   const handleContinueAnyway = () => {
     setShowVerificationPopup(false);
+    setHasContinueAfterMismatch(true);
   };
 
   return (
@@ -224,6 +226,25 @@ const CartEntry: React.FC = () => {
           </div>
         </div>
       )}
+      {hasContinueAfterMismatch && (
+      <div className="mt-6 text-center">
+        <button
+          onClick={() => {
+            setCartId('');
+            setDebouncedCartId('');
+            setItems([]);
+            setActualWeight(null);
+            setWeightDifference(null);
+            setHasContinueAfterMismatch(false);
+            navigate('/cart-entry'); // assuming your route is /cart-entry
+          }}
+          className="px-6 py-3 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition font-semibold"
+        >
+          Start New Cart
+        </button>
+      </div>
+    )}
+
 
       {/* Dashboard Header */}
       <header className="bg-white shadow-sm">
