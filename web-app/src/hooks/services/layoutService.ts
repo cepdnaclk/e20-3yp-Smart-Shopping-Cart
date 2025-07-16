@@ -18,14 +18,11 @@ export const layoutService = {
      * @throws Error if authentication tokens are missing or the API call fails.
      */
     async saveLayout(fixtureLayout: FixturesMapService, itemMap: ItemMapService): Promise<any> {
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
 
-        const response = await api.post("/layout/auth/save", { fixtureLayout, itemMap });
+        const requestBody = { fixtureLayout, itemMap };
+        console.log("📦 Sending layout save request:", JSON.stringify(requestBody, null, 2));
+
+        const response = await api.post("/layout/auth/save", requestBody);
         return response.data;
     },
 
@@ -41,19 +38,32 @@ export const layoutService = {
      * IMPORTANT: There was no data about the supermarker/stroe name in the backend.
      * I need the store name or some identifier to fetch the correct layout to the mobile app
      */
-    async getLayout(storeName: string): Promise<{ fixtureLayout: FixturesMapService, itemMap: ItemMapService }> {
-        console.log('Attepting to load FixtureLayout and ItemMap');
-        // Check for tokens before making request
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!accessToken || !refreshToken) {
-            throw new Error('Authentication tokens missing. Please log in again.');
-        }
+    async getLayout(): Promise<{ layoutId: string, fixtureLayout: FixturesMapService, itemMap: ItemMapService }> {
+        try {
+            console.log('📦 Attempting to fetch layout data from /layout/auth/all');
 
-        // Construct the URL with a query parameter for storeName
-        const response = await api.get<{ fixtureLayout: FixturesMapService, itemMap: ItemMapService }>(`/layout/auth/get?storeName=${encodeURIComponent(storeName)}`);
-        return response.data;
+            // Expecting an array of layouts
+            const response = await api.get<Array<{ layoutId: string, fixtureLayout: FixturesMapService, itemMap: ItemMapService }>>(`/layout/auth/all`);
+
+            if (response.data.length === 0) {
+                console.warn('⚠️ No layouts found in the response');
+                throw new Error('No layout data available');
+            }
+
+            const firstLayout = response.data[0];
+
+            console.log('✅ Layout data fetched successfully');
+            console.log('🆔 First Layout ID:', firstLayout.layoutId);
+            console.log('🧱 Fixture Layout:', firstLayout.fixtureLayout);
+            console.log('📦 Item Map:', firstLayout.itemMap);
+
+            return firstLayout;
+        } catch (error) {
+            console.error('❌ Error fetching layout data:', error);
+            throw error;
+        }
     },
+
 
     /**
      * Deletes the saved layout and item mapping data from the backend.

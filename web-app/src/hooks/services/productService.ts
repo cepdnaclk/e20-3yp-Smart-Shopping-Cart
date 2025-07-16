@@ -1,4 +1,4 @@
-import { Product, sampleProducts } from "../../types/Item";
+import { Product, sampleProducts, CartItem } from "../../types/Item";
 import api from "./api"; // Assuming your configured axios instance
 
 // Define interface for Product creation payload (without barcode, includes image as File)
@@ -100,7 +100,7 @@ export const productService = {
      */
    async getAllProducts(): Promise<Product[]> {
     try {
-        const response = await api.get<Product[]>('/product/all/all');
+        const response = await api.get<Product[]>('/product/auth/all/all');
         return response.data;
     } catch (error) {
         console.error("Failed to fetch all products. Using sample data as fallback:", error);
@@ -130,4 +130,31 @@ export const productService = {
         const response = await api.get<Product[]>(`/product/all/by-brand?brand=${brand}`);
         return response.data;
     },
+
+    async getProductsByCustomer(customerId: string): Promise<Product[]> {
+        const response = await api.get<Product[]>(`/product/auth/by-customer?customerId=${customerId}`);
+        return response.data;
+    },
+
+    async getShoppingListItems(userId: string): Promise<CartItem[]> {
+        try {
+            const response = await api.get<CartItem[]>(`/cart/auth/user/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching shopping list items:', error);
+            throw new Error('Failed to load shopping list items.');
+        }
+    },
+
+    async getTotalWeight(userId: string): Promise<number> {
+        try {
+            const response = await api.get(`/bill/auth/view/${userId}`);
+            const dto = response.data;
+            const parsedWeight = parseFloat(dto.totalWeight); // "0.487"
+            return isNaN(parsedWeight) ? 0 : parsedWeight * 1000; // convert kg to grams
+        } catch (error) {
+            console.error('Error fetching total weight:', error);
+            throw new Error('Failed to load total weight.');
+        }
+    }
 };

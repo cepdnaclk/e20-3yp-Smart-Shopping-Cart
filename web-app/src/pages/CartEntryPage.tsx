@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import styles from './CartEntry.module.css'; // Import the CSS module
 import { db, auth } from '../utils/firebase';
+import { productService } from "../hooks/services/productService.ts";
 
 interface CartItem {
   name: string;
@@ -20,6 +21,34 @@ const CartEntry: React.FC = () => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [username, setUsername] = useState('');
+  const [expectedWeightFromBill, setExpectedWeightFromBill] = useState<number | null>(null);
+
+
+  const fetchDataForUser = async (userId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const itemsData = await productService.getShoppingListItems(userId);
+      setItems(itemsData);
+
+      const billWeight = await productService.getTotalWeight(userId);
+      setExpectedWeightFromBill(billWeight);
+
+      setTimeout(() => {
+        const table = document.getElementById('items-table');
+        if (table) table.style.opacity = '1';
+      }, 50);
+
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setItems([]);
+      setExpectedWeightFromBill(null);
+      setError(err instanceof Error ? err.message : 'Failed to load data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Debounce cart ID input
   useEffect(() => {
@@ -94,15 +123,10 @@ const CartEntry: React.FC = () => {
     [items]
   );
 
-  const calculateExpectedWeight = useCallback(() =>
-    items.reduce((total, item) => total + (item.weight * item.quantity), 0),
-    [items]
-  );
-
   const calculateWeightDifference = useCallback(() => {
-    if (actualWeight === null || items.length === 0) return null;
-    return actualWeight - calculateExpectedWeight();
-  }, [actualWeight, items, calculateExpectedWeight]);
+    if (actualWeight === null || expectedWeightFromBill === null) return null;
+    return actualWeight - expectedWeightFromBill;
+  }, [actualWeight, expectedWeightFromBill]);
 
   const handleLogout = async () => {
     try {
@@ -113,19 +137,19 @@ const CartEntry: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (calculateWeightDifference() !== null && Math.abs(calculateWeightDifference()!) > 50) {
-      navigate('/blocked', {
-        state: {
-          cartId: debouncedCartId,
-          cartWeight: actualWeight ? actualWeight / 1000 : 0, // Convert to kg
-          actualWeight: actualWeight ? actualWeight / 1000 : 0,
-          totalWeight: calculateExpectedWeight() / 1000 // Convert to kg
-        },
-        replace: true
-      });
-    }
-  }, [calculateWeightDifference, actualWeight, calculateExpectedWeight, navigate, debouncedCartId]);
+  // useEffect(() => {
+  //   if (calculateWeightDifference() !== null && Math.abs(calculateWeightDifference()!) > 50) {
+  //     navigate('/blocked', {
+  //       state: {
+  //         cartId: debouncedCartId,
+  //         cartWeight: actualWeight ? actualWeight / 1000 : 0, // Convert to kg
+  //         actualWeight: actualWeight ? actualWeight / 1000 : 0,
+  //         totalWeight: calculateExpectedWeight() / 1000 // Convert to kg
+  //       },
+  //       replace: true
+  //     });
+  //   }
+  // }, [calculateWeightDifference, actualWeight, calculateExpectedWeight, navigate, debouncedCartId]);
 
   return (
     <div className={styles.container}>
@@ -181,6 +205,30 @@ const CartEntry: React.FC = () => {
               </div>
             )}
           </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="username" className={styles.label}>
+              Username
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span className={styles.inputPrefix}>USER</span>
+              <input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      fetchDataForUser(`USER${username.trim()}`);
+                    }
+                  }}
+                  placeholder="e.g., 60523"
+                  className={styles.input}
+                  style={{ flex: 1 }}
+              />
+            </div>
+          </div>
 
           {/* Weight Comparison Section */}
           <div className={styles.weightComparisonSection}>
@@ -191,13 +239,13 @@ const CartEntry: React.FC = () => {
                 <div className={`${styles.weightCard} ${styles.expectedWeightCard}`}>
                   <h4 className={styles.weightCardTitle}>Expected Weight</h4>
                   <div className={styles.weightValue}>
-                    {items.length > 0 ? (
-                      <span>{calculateExpectedWeight().toLocaleString()} <span className={styles.weightUnit}>g</span></span>
+                    {expectedWeightFromBill !== null ? (
+                        <span>{expectedWeightFromBill.toLocaleString()}<span className={styles.weightUnit}> g</span></span>
                     ) : (
-                      <span style={{ color: '#9ca3af' }}>-</span> /* text-gray-400 */
+                        <span style={{ color: '#9ca3af' }}>-</span>
                     )}
                   </div>
-                  <p className={styles.weightDescription}>Sum of all item weights</p>
+                  <p className={styles.weightDescription}>Fetched from bill data</p>
                 </div>
 
                 <div className={`${styles.weightCard} ${styles.actualWeightCard}`}>
@@ -250,14 +298,16 @@ const CartEntry: React.FC = () => {
               {calculateWeightDifference() !== null && (
                 <div className={styles.visualizationContainer}>
                   <div className={styles.visualizationLabels}>
-                    <span>Expected: {calculateExpectedWeight().toLocaleString()}g</span>
+                   <span>
+                    Expected: {expectedWeightFromBill !== null ? expectedWeightFromBill.toLocaleString() : '-'}g
+                  </span>
                     <span>Actual: {actualWeight!.toLocaleString()}g</span>
                   </div>
                   <div className={styles.progressBarBackground}>
                     <div
                       className={styles.progressBarFill}
                       style={{
-                        width: `${Math.min(calculateExpectedWeight(), actualWeight!) / Math.max(calculateExpectedWeight(), actualWeight!) * 100}%`,
+                        width: `${Math.min(expectedWeightFromBill as number, actualWeight!) / Math.max(expectedWeightFromBill as number, actualWeight!) * 100}%`,
                         backgroundColor: Math.abs(calculateWeightDifference()!) <= 50 ? '#4f46e5' : '#ef4444'
                       }}
                     ></div>
@@ -284,7 +334,7 @@ const CartEntry: React.FC = () => {
                 <div className={styles.cartItemsSummary}>
                   <span className={styles.fontMedium}>{items.length} items</span> {/* Corrected line */}
                   <span className={styles.separator}>•</span> {/* Corrected line */}
-                  <span>{calculateExpectedWeight().toLocaleString()}g expected</span>
+                  <span>{expectedWeightFromBill !== null ? expectedWeightFromBill.toLocaleString() : '-'}g expected</span>
                 </div>
               )}
             </div>
@@ -346,7 +396,7 @@ const CartEntry: React.FC = () => {
                 <div>
                   <h4 className={styles.summaryCardTitle}>Expected Total Weight</h4>
                   <p className={styles.summaryValue}>
-                    {calculateExpectedWeight().toLocaleString()}g
+                    {expectedWeightFromBill !== null ? expectedWeightFromBill.toLocaleString() : '-'}g
                   </p>
                   <p className={styles.summaryDescription}>
                     Calculated from {items.length} item{items.length !== 1 ? 's' : ''}

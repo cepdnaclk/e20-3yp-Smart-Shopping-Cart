@@ -69,6 +69,13 @@ export const defaultFormState: ProductFormState = {
     productImage: undefined,
   };
 
+export interface CartItem {
+    name: string;
+    price: number;
+    quantity: number;
+    weight: number; // in grams
+}
+
 // Define interfaces for Product data
 // These should ideally come from a shared types file (e.g., ../types/Product.ts)
 export interface Product {
