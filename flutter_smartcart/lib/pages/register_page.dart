@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import 'package:flutter_smartcart/services/navigation/api_service.dart';
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -10,39 +11,50 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _nicController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  String? _selectedSex;
   bool _isLoading = false;
 
   void _registerUser() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // ✅ Use named parameters here
-      bool success = await AuthService().register(
-        fullname: _nameController.text.trim(),
-        username: _emailController.text.trim(),
-        contact: _phoneController.text.trim(),
-        sex: _selectedSex ?? '',
-        password: _passwordController.text.trim(),
-      );
-
-      setState(() => _isLoading = false);
-
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration successful!')),
+      try {
+        final userData = await ApiService.register(
+          firstName: _firstNameController.text.trim(),
+          lastName: _lastNameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          phone: _phoneController.text.trim(),
+          nic: _nicController.text.trim(),
         );
-        _formKey.currentState!.reset();
-        Navigator.pop(context);
-      } else {
+
+        setState(() => _isLoading = false);
+
+        if (userData['token'] != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Registration successful!')),
+          );
+          Navigator.pushReplacementNamed(
+            context,
+            '/home',
+            arguments: {'userData': userData},
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Registration failed. Invalid response.')),
+          );
+        }
+      } catch (e) {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration failed. Try again.')),
+          SnackBar(content: Text('Registration failed: ${e.toString()}')),
         );
       }
     }
@@ -50,9 +62,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _nicController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -72,29 +86,45 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _nameController,
+                  controller: _firstNameController,
                   decoration: const InputDecoration(
-                    labelText: 'Full Name',
+                    labelText: 'First Name',
                     border: OutlineInputBorder(),
                   ),
-                  validator:
-                      (value) =>
-                          value == null || value.trim().isEmpty
-                              ? 'Enter your full name'
-                              : null,
+                  validator: (value) =>
+                      value == null || value.trim().isEmpty
+                          ? 'Enter your first name'
+                          : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Last Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) =>
+                      value == null || value.trim().isEmpty
+                          ? 'Enter your last name'
+                          : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    labelText: 'Email or Username',
+                    labelText: 'Email',
                     border: OutlineInputBorder(),
                   ),
-                  validator:
-                      (value) =>
-                          value == null || value.trim().isEmpty
-                              ? 'Enter email or username'
-                              : null,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Enter email';
+                    }
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      return 'Enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -108,27 +138,22 @@ class _RegisterPageState extends State<RegisterPage> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Enter phone number';
                     } else if (!RegExp(r'^\d{10,}$').hasMatch(value)) {
-                      return 'Enter a valid phone number';
+                      return 'Enter a valid phone number (10+ digits)';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _selectedSex,
+                TextFormField(
+                  controller: _nicController,
                   decoration: const InputDecoration(
-                    labelText: 'Sex',
+                    labelText: 'NIC Number',
                     border: OutlineInputBorder(),
                   ),
-                  items: const [
-                    DropdownMenuItem(value: 'Male', child: Text('Male')),
-                    DropdownMenuItem(value: 'Female', child: Text('Female')),
-                    DropdownMenuItem(value: 'Other', child: Text('Other')),
-                  ],
-                  onChanged: (value) => setState(() => _selectedSex = value),
-                  validator:
-                      (value) =>
-                          value == null ? 'Please select your sex' : null,
+                  validator: (value) =>
+                      value == null || value.trim().isEmpty
+                          ? 'Enter your NIC number'
+                          : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -138,11 +163,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelText: 'Password',
                     border: OutlineInputBorder(),
                   ),
-                  validator:
-                      (value) =>
-                          value == null || value.length < 6
-                              ? 'Password must be at least 6 characters'
-                              : null,
+                  validator: (value) =>
+                      value == null || value.length < 6
+                          ? 'Password must be at least 6 characters'
+                          : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -152,19 +176,24 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelText: 'Confirm Password',
                     border: OutlineInputBorder(),
                   ),
-                  validator:
-                      (value) =>
-                          value != _passwordController.text
-                              ? 'Passwords do not match'
-                              : null,
+                  validator: (value) =>
+                      value != _passwordController.text
+                          ? 'Passwords do not match'
+                          : null,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _registerUser,
-                  child:
-                      _isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('Register'),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Register'),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Already have an account? Login"),
                 ),
               ],
             ),

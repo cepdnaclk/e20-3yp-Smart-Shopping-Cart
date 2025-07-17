@@ -53,7 +53,8 @@ class SmartCartApp extends StatelessWidget {
                       body: Center(child: Text('No product data provided')),
                     ),
               );
-            }            return MaterialPageRoute(
+            }
+            return MaterialPageRoute(
               builder: (_) => ProductDetailPage(product: product),
             );
           case '/store-layout':

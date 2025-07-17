@@ -9,9 +9,9 @@ app.use(express.json());
 const dbConfig = {
   host: 'localhost',
   port: 3306,
-  user: 'root',
-  password: 'root123',
-  database: 'smartcart',
+  user: 'root',     // user: 'root',  
+  password: '',     // password: 'root123',
+  database: 'smart_shopping_cart',
 };
 
 // 🟢 Login API
