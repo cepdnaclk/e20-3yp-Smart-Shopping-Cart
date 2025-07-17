@@ -2,17 +2,58 @@ import 'dart:convert';
 import '../../models/navigation/fixture.dart';
 import '../../models/navigation/item.dart';
 import '../../models/navigation/item_position.dart';
-import 'api_service.dart';  // DO NOT REMOVE BECAUSE OF THE WARNING
+import 'api_service.dart';
 
 class DataService {
   // Set this to true to use API data instead of hardcoded data
-  static const bool useApi = false;  static Future<Map<String, Fixture>> loadFixtures() async {
+  static const bool useApi = true; // Changed to true to use API
+
+  static Future<Map<String, Fixture>> loadFixtures() async {
     if (useApi) {
-      // return ApiService.fetchFixtures();
-      return _loadHardcodedFixtures(); // Fallback to hardcoded data for now
+      try {
+        return await ApiService.fetchFixtures();
+      } catch (e) {
+        print('API error, falling back to hardcoded data: $e');
+        return _loadHardcodedFixtures(); // Fallback to hardcoded data on error
+      }
     }
     return _loadHardcodedFixtures();
   }
+
+  static Future<Map<String, List<List<List<Item>>>>> loadItemMap() async {
+    if (useApi) {
+      try {
+        return await ApiService.fetchItemMap();
+      } catch (e) {
+        print('API error, falling back to hardcoded data: $e');
+        return _loadHardcodedItemMap(); // Fallback to hardcoded data on error
+      }
+    }
+    return _loadHardcodedItemMap();
+  }
+
+  static Future<List<String>> loadShoppingList() async {
+    if (useApi) {
+      try {
+        final inventory = await ApiService.getInventoryItems();
+
+        // Use the `_id` field from each inventory item as shopping list items
+        final itemIds =
+            inventory
+                .where((item) => item['_id'] != null)
+                .map<String>((item) => item['_id'] as String)
+                .toList();
+
+        return itemIds;
+      } catch (e) {
+        print('API error, falling back to hardcoded data: $e');
+        return _loadHardcodedShoppingList();
+      }
+    }
+    return _loadHardcodedShoppingList();
+  }
+
+  /* Functions with hardcoded data */
 
   static Map<String, Fixture> _loadHardcodedFixtures() {
     const String fixtureJsonData = '''
@@ -23,13 +64,6 @@ class DataService {
     return fixtureData.map(
       (key, value) => MapEntry(key, Fixture.fromJson(value)),
     );
-  }
-  static Future<Map<String, List<List<List<Item>>>>> loadItemMap() async {
-    if (useApi) {
-      // return ApiService.fetchItemMap();
-      return _loadHardcodedItemMap(); // Fallback to hardcoded data for now
-    }
-    return _loadHardcodedItemMap();
   }
 
   static Map<String, List<List<List<Item>>>> _loadHardcodedItemMap() {
@@ -58,28 +92,73 @@ class DataService {
 
     return loadedItemMap;
   }
-  static Future<List<String>> loadShoppingList() async {
-    if (useApi) {
-      // return ApiService.fetchShoppingList();
-      return _loadHardcodedShoppingList(); // Fallback to hardcoded data for now
-    }
-    return _loadHardcodedShoppingList();
-  }
 
   static List<String> _loadHardcodedShoppingList() {
     return [
-      "c344724b-ee6c-4ffb-859a-7b35398ea516",
-      "fffccbbc-56d3-4af8-83ff-d1bd98c7c7b0",
-      "d6b7c137-5f82-45e7-810d-63267d61d85f",
-      "0540b624-b83a-4b1a-94fd-efe5ed9030f1",
-      "113c2d45-06db-4bdb-8bf0-cec329ba2963",
-      "36e52e6e-a1eb-4285-b85d-f06e44e8a609",
-      "7b2ee6b4-c695-41e6-881d-77ac34683424",
-      "84a835aa-dcd0-44f6-a6cd-73266f333ac4",
-      "6fa1ad6a-df8a-4f97-81ee-fe3b82d63944",
-      "b7c379d2-8bcf-4a1e-9d7e-c26adfee6690",
-      "7f5e9735-8015-4d4f-9793-4ab67f52b6ad",
+      "683e3df8864b87fab597aba8",
+      "683e3df8864b87fab597aba9",
+      "683e3df8864b87fab597abaa",
+      "683e3df8864b87fab597abab",
     ];
+  }
+
+  // Helper method to save layout data to the API
+
+  static Future<bool> saveLayoutToApi({
+    required Map<String, Fixture> fixtures,
+    required Map<String, List<List<List<Item>>>> itemMap,
+  }) async {
+    if (!useApi) return false;
+
+    try {
+      // Convert fixtures to JSON format
+      final fixtureLayout = fixtures.map(
+        (key, fixture) => MapEntry(key, {
+          'id': fixture.id,
+          'x': fixture.x,
+          'y': fixture.y,
+          'points': fixture.points,
+          'color': fixture.color,
+          'name': fixture.name,
+        }),
+      );
+
+      // Convert itemMap to JSON format
+      final itemMapJson = <String, dynamic>{};
+      itemMap.forEach((edgeKey, edgeData) {
+        final jsonRows = <List<List<Map<String, dynamic>>>>[];
+        for (final row in edgeData) {
+          final jsonCols = <List<Map<String, dynamic>>>[];
+          for (final col in row) {
+            final jsonItems =
+                col
+                    .map(
+                      (item) => {
+                        'id': item.id,
+                        'name': item.name,
+                        'row': item.row,
+                        'col': item.col,
+                        'index': item.index,
+                      },
+                    )
+                    .toList();
+            jsonCols.add(jsonItems);
+          }
+          jsonRows.add(jsonCols);
+        }
+        itemMapJson[edgeKey] = jsonRows;
+      });
+
+      await ApiService.saveLayout(
+        fixtureLayout: fixtureLayout,
+        itemMap: itemMapJson,
+      );
+
+      return true;
+    } catch (e) {
+      print('Error saving layout to API: $e');
+      return false;
+    }
   }
 
   static ItemPosition? findItemPosition(

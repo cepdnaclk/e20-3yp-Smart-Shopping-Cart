@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import 'package:flutter_smartcart/services/navigation/api_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,7 +10,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
@@ -19,24 +19,29 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final userData = await AuthService().login(
-        username: _usernameController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-
-      setState(() => _isLoading = false);
-
-      if (userData != null &&
-          userData['user'] != null &&
-          userData['user']['username'] != null) {
-        Navigator.pushReplacementNamed(
-          context,
-          '/home',
-          arguments: {'username': userData['user']['username']},
+      try {
+        final userData = await ApiService.login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
         );
-      } else {
+
+        setState(() => _isLoading = false);
+
+        if (userData['token'] != null) {
+          Navigator.pushReplacementNamed(
+            context,
+            '/home',
+            arguments: {'userData': userData},
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Login failed. Invalid response.")),
+          );
+        }
+      } catch (e) {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login failed. Check credentials.")),
+          SnackBar(content: Text("Login failed: ${e.toString()}")),
         );
       }
     }
@@ -44,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -67,16 +72,21 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
-                  controller: _usernameController,
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    labelText: 'Username',
+                    labelText: 'Email',
                     border: OutlineInputBorder(),
                   ),
-                  validator:
-                      (value) =>
-                          value == null || value.isEmpty
-                              ? 'Enter username'
-                              : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter email';
+                    }
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      return 'Enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -86,19 +96,17 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Password',
                     border: OutlineInputBorder(),
                   ),
-                  validator:
-                      (value) =>
-                          value == null || value.length < 6
-                              ? 'Password too short'
-                              : null,
+                  validator: (value) =>
+                      value == null || value.length < 6
+                          ? 'Password must be at least 6 characters'
+                          : null,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _loginUser,
-                  child:
-                      _isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('Login'),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Login'),
                 ),
                 const SizedBox(height: 12),
                 TextButton(
@@ -106,6 +114,12 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.pushNamed(context, '/register');
                   },
                   child: const Text("Don't have an account? Register"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/forgot-password');
+                  },
+                  child: const Text("Forgot Password?"),
                 ),
               ],
             ),

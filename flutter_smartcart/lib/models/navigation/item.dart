@@ -12,7 +12,6 @@ class Item {
     required this.col,
     required this.index,
   });
-
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       id: json['id'],
@@ -21,5 +20,10 @@ class Item {
       col: json['col'],
       index: json['index'],
     );
+  }
+
+  @override
+  String toString() {
+    return '{name: $name, id: $id, row: $row, col: $col, index: $index}';
   }
 }
