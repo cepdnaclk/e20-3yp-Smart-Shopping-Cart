@@ -1,0 +1,5 @@
+### GET request to get Customer Role
+GET http://localhost:4000/customer/role
+Authorization: Bearer {{customer_token}}
+
+###

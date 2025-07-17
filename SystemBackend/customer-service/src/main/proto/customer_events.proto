@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package customer.events;
+option java_multiple_files = true;
+
+message CustomerEvent{
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string username = 4;
+  string password = 5;
+  string email = 6;
+  string phoneNumber = 7;
+  string nic = 8;
+  string address = 9;
+  string registrationDate = 10;
+}

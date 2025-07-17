@@ -1,0 +1,12 @@
+### POST request to add a new Shopping Item
+POST http://localhost:4020/api/shopping-list/add
+Content-Type: application/json
+Authorization: Bearer {{customer_token}}
+
+{
+  "itemName": "Milo Packet",
+  "quantity": 2,
+  "weight": 0.4
+}
+
+###

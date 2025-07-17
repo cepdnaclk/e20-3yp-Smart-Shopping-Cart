@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package billbackup;
+
+option java_multiple_files = true;
+option java_package = "com.sb.backupservice.grpc";
+option java_outer_classname = "BillBackupProto";
+
+// gRPC Service
+service BillBackupService {
+  rpc SaveBill (BillRequest) returns (BillResponse);
+  rpc DeleteBill (DeleteBillRequest) returns (BillResponse);
+}
+
+// Enum definition
+enum BILL_STATUS {
+
+  PAID = 0;
+
+}
+
+enum PAYMENT_METHOD {
+
+  CREDIT_CARD = 0;
+  DEBIT_CARD = 1;
+  CASH = 2;
+  CHEQUE = 3;
+
+}
+
+// Message to send
+message BillRequest {
+  int64 id = 1;
+  int64 cartId = 2;
+  string username = 3;
+  double totalPrice = 4;
+  string date = 5;
+  string approvedBy = 6;
+  BILL_STATUS status = 7;
+  PAYMENT_METHOD paymentMethod = 8;
+}
+
+// Delete Request
+message DeleteBillRequest {
+  int64 id = 1;
+}
+
+// Response
+message BillResponse {
+  string status = 1;
+}

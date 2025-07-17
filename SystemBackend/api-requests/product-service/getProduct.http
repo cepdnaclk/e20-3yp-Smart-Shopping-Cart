@@ -1,0 +1,4 @@
+### GET request get a product by barcode
+GET http://localhost:4002/product/get
+
+###

@@ -1,0 +1,19 @@
+### POST request to add a new Product
+POST http://localhost:4020/api/product/auth/add
+Authorization: Bearer {{user_token}}
+Content-Type: application/json
+
+{
+  "productName": "Baby Soap",
+  "productDescription": "Smooth and fragrant soap for Babies, imported from UK.",
+  "productPrice": 154.99,
+  "productQuantity": 50,
+  "productCategory": "Soap",
+  "productBrand": "Panda Baby",
+  "productWeight": 0.075,
+  "productShelfNumber": 5,
+  "productRowNumber" : 3
+}
+
+
+###

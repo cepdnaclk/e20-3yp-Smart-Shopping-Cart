@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package customerbackup;
+
+option java_multiple_files = true;
+option java_package = "com.sb.customerbackupservice.grpc";
+option java_outer_classname = "CustomerBackupProto";
+
+// gRPC Service
+service CustomerBackupService {
+  rpc SaveCustomer (CustomerRequest) returns (CustomerResponse);
+  rpc DeleteCustomer (DeleteCustomerRequest) returns (CustomerResponse);
+}
+
+// Message to send
+message CustomerRequest {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string username = 4;
+  string password = 5;
+  string email = 6;
+  string phoneNumber = 7;
+  string nic = 8;
+  string address = 9;
+  string registrationDate = 10;
+}
+
+// Delete Request
+message DeleteCustomerRequest {
+  string username = 1;
+}
+
+// Response
+message CustomerResponse {
+  string status = 1;
+}

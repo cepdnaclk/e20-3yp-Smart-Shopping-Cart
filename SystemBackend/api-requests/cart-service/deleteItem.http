@@ -1,0 +1,5 @@
+### DELETE request to delete an item from the cart
+DELETE http://localhost:4005/cart/deleteItem?id=1
+
+
+###

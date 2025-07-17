@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="cart-service" />
+        <module name="customer-service" />
+        <module name="IntegrationTests" />
+        <module name="email-service" />
+        <module name="api-gateway" />
+        <module name="customer-backup-service" />
+        <module name="product-service" />
+        <module name="shoppingList-service" />
+        <module name="backup-service" />
+        <module name="user-service" />
+        <module name="bill-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="auth-service" target="21" />
+      <module name="integration-tests" target="21" />
+      <module name="shopping-list" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-gateway" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
+      <module name="backup-service" options="-parameters" />
+      <module name="bill-service" options="-parameters" />
+      <module name="cart-service" options="-parameters" />
+      <module name="customer-backup-service" options="-parameters" />
+      <module name="customer-service" options="-parameters" />
+      <module name="email-service" options="-parameters" />
+      <module name="product-service" options="-parameters" />
+      <module name="shopping-list" options="-parameters" />
+      <module name="shoppingList-service" options="-parameters" />
+      <module name="user-service" options="-parameters" />
+    </option>
+  </component>
+</project>

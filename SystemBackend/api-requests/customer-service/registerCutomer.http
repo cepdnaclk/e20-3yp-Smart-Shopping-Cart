@@ -1,0 +1,15 @@
+### POST Request to Register a New Customer
+POST http://localhost:4020/api/customer/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "Minul",
+    "lastName": "Sankalpa",
+    "email": "janidukips@gmail.com",
+    "nic": "200106901589",
+    "address": "123 Main St, Eheliyagoda",
+    "phoneNumber": "0712345678"
+
+}
+
+###

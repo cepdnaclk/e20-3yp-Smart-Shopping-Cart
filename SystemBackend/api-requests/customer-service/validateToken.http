@@ -1,0 +1,5 @@
+### GET request validate customer Token
+GET http://localhost:4000/customer/validate
+Authorization: Bearer {{customer_token}}
+
+###

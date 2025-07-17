@@ -1,0 +1,5 @@
+### Delete request to delete customer
+DELETE http://localhost:4020/api/customer/profile/delete?username=USER65687
+Authorization: Bearer {{ customer_token }}
+
+###

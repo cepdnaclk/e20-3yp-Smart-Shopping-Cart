@@ -1,0 +1,5 @@
+### GET request getItem from cart
+GET http://localhost:4005/cart/item?id=1
+
+
+###

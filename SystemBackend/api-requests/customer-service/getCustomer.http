@@ -1,0 +1,5 @@
+### GET request to get Customer
+GET http://localhost:4020/api/customer/profile/get
+Authorization: Bearer {{ customer_token }}
+
+###

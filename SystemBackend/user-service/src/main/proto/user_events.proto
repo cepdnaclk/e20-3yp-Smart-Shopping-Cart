@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package user.events;
+option java_multiple_files = true;
+
+// Enum definition
+enum Role {
+  ADMIN = 0;
+  MANAGER = 1;
+  CASHIER = 2;
+  SECURITY = 3;
+  SUPPLIER = 4;
+  STAFF = 5;
+}
+
+
+message UserEvent{
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string username = 4;
+  string password = 5;
+  string email = 6;
+  string phoneNumber = 7;
+  string nic = 8;
+  Role role = 9;
+  string registrationDate = 10;
+  string registeredBy = 11;
+}

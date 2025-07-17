@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package productdetails;
+
+option java_multiple_files = true;
+option java_package = "com.sb.productservice.grpc";
+option java_outer_classname = "ProductDetailsProto";
+
+// Service definition
+service ProductDetailsService {
+  rpc GetProductDetails (ProductDetailsRequest) returns (ProductDetailsResponse);
+}
+
+message ProductDetailsRequest {
+  string barcode = 1; // or use barcode, or both
+}
+
+message ProductDetailsResponse {
+  bool exists = 1;
+  string product_name = 2;
+  double product_price = 3;
+  int32 product_quantity = 4;
+  double product_weight = 5;
+  string message = 6;
+}

@@ -1,0 +1,6 @@
+### GET request to get User
+
+GET http://localhost:4020/api/user/profile/get
+Authorization: Bearer {{ user_token }}
+
+###

@@ -1,0 +1,17 @@
+### PUT Request to Update Product
+PUT http://localhost:4002/product/update
+Content-Type: application/json
+
+{
+  "barcode": "1234567890123",
+  "productName": "Galaxy Chocolate Bar - Updated",
+  "productDescription": "Updated description for testing.",
+  "productPrice": 5.49,
+  "productQuantity": 120,
+  "productCategory": "Chocolates",
+  "productBrand": "Galaxy",
+  "productWeight": 0.12
+}
+
+
+###

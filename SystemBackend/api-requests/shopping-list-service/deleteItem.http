@@ -1,0 +1,3 @@
+### DELETE request to delete a specific Shopping Item by ID
+DELETE http://localhost:4006/shopping-list/delete/1
+###

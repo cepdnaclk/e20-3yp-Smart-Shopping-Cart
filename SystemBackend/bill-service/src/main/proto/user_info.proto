@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package userinfo;
+
+option java_multiple_files = true;
+option java_package = "com.sb.customerservice.grpc";
+option java_outer_classname = "CustomerInfoProto";
+
+service UserInfoService {
+  rpc GetUsername(GetUsernameRequest) returns (GetUsernameResponse);
+}
+
+message GetUsernameRequest {
+  string jwt = 1;
+}
+
+message GetUsernameResponse {
+  string username = 1;
+}

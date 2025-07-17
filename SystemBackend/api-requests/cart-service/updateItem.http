@@ -1,0 +1,13 @@
+### Update an item in the cart
+
+PUT http://localhost:4005/cart/updateItem
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "KitKat - Big Pack",
+  "quantity": 3,
+  "price": 6.00
+}
+
+###

@@ -1,0 +1,3 @@
+### DELETE request to delete all Shopping Items for the user
+DELETE http://localhost:4006/shopping-list/delete-all
+###

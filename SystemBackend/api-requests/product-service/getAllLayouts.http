@@ -1,0 +1,5 @@
+### GET request to get all products
+GET http://localhost:4020/api/layout/auth/all
+Authorization: Bearer {{manager_token}}
+
+###

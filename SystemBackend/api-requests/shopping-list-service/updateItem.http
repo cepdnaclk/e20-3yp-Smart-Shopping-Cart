@@ -1,0 +1,11 @@
+### PUT request to update an existing Shopping Item
+PUT http://localhost:4006/shopping-list/update
+Content-Type: application/json
+
+{
+  "id": 1,
+  "itemName": "Milo Packet",
+  "quantity": 3,
+  "weight": 0.5
+}
+###

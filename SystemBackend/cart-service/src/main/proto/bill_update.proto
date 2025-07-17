@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package billupdate;
+
+option java_multiple_files = true;
+option java_package = "com.sb.billservice.grpc";
+option java_outer_classname = "BillUpdateProto";
+
+// gRPC Service
+service BillUpdateService {
+  rpc UpdateBill (BillRequest) returns (BillResponse);
+}
+
+
+// Message to send
+message BillRequest {
+
+  string username = 1;
+  string cartId = 2;
+  double totalPrice = 3;
+  double totalWeight = 4;
+
+}
+
+
+// Response
+message BillResponse {
+  string status = 1;
+}

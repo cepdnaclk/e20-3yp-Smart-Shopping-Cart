@@ -1,0 +1,5 @@
+### GET request to logout a Customer
+GET http://localhost:4020/api/customer/profile/logout
+Authorization: Bearer {{customer_token}}
+
+###

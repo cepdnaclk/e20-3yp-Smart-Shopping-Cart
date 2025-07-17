@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package productbackup;
+
+option java_multiple_files = true;
+option java_package = "com.sb.backupservice.grpc";
+option java_outer_classname = "ProductBackupProto";
+
+// gRPC Service for Product
+service ProductBackupService {
+  rpc AddProduct (ProductRequest) returns (ProductResponse);
+  rpc UpdateProduct (ProductRequest) returns (ProductResponse);
+  rpc DeleteProduct (DeleteProductRequest) returns (ProductResponse);
+}
+
+// Request for Add and Update
+message ProductRequest {
+  string id = 1; // Product UUID or string ID
+  string barcode = 2;
+  string productName = 3;
+  string productDescription = 4;
+  double productPrice = 5;
+  int32 productQuantity = 6;
+  string productCategory = 7;
+  string productBrand = 8;
+  double productWeight = 9;
+  string addedDate = 10; // Format: ISO-8601 (e.g., 2025-05-12T10:15:30)
+  string productImageUrl = 11; // URL to the product image
+}
+
+// Request for Delete
+message DeleteProductRequest {
+  string barcode = 1;
+}
+
+// Generic Response
+message ProductResponse {
+  string status = 1;
+}

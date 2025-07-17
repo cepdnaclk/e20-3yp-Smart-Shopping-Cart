@@ -1,0 +1,15 @@
+### POST Request to Register User
+POST http://localhost:4020/api/user/profile/register
+Authorization: Bearer {{user_token}}
+Content-Type: application/json
+
+{
+  "firstName": "Janidu",
+  "lastName": "Ranawaka",
+  "email": "rockman9291@gmail.com",
+  "phoneNumber": "0771234567",
+  "nic": "20001285928V",
+  "role": "MANAGER"
+}
+
+###

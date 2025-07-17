@@ -1,0 +1,15 @@
+### PUT request to update user profile
+PUT http://localhost:4020/api/user/profile/update
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+{
+  "username": "ADMIN63",
+  "firstName": "Janidu",
+  "lastName": "Ranawaka",
+  "email": "janidu@email.com",
+  "role": "ADMIN",
+  // add any other fields in RegisterUserDTO as needed
+}
+
+###

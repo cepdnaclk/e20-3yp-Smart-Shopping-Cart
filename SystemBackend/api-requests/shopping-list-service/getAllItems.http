@@ -1,0 +1,5 @@
+### GET request to fetch all Shopping Items for the current user
+
+GET http://localhost:4006/shopping-list/items
+
+###

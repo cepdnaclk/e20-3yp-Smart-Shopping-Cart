@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package userbackup;
+
+option java_multiple_files = true;
+option java_package = "com.sb.backupservice.grpc";
+option java_outer_classname = "UserBackupProto";
+
+// gRPC Service
+service UserBackupService {
+  rpc SaveUser (UserRequest) returns (UserResponse);
+  rpc DeleteUser (DeleteUserRequest) returns (UserResponse);
+}
+
+// Enum definition
+enum Role {
+  ADMIN = 0;
+  MANAGER = 1;
+  CASHIER = 2;
+  SECURITY = 3;
+  SUPPLIER = 4;
+  STAFF = 5;
+  GUEST = 6;
+}
+
+// Message to send
+message UserRequest {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string username = 4;
+  string password = 5;
+  string email = 6;
+  string phoneNumber = 7;
+  string nic = 8;
+  Role role = 9;
+  string registrationDate = 10;
+  string registeredBy = 11;
+}
+
+// Delete Request
+message DeleteUserRequest {
+  string username = 1;
+}
+
+// Response
+message UserResponse {
+  string status = 1;
+}

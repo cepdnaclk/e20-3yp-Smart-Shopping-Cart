@@ -1,0 +1,5 @@
+### GET request to get Products by Brand
+GET http://localhost:4002/product/by-brand?brand=Galaxy
+
+
+###

@@ -1,0 +1,5 @@
+### GET request to get all products
+GET http://localhost:4020/api/product/all/all
+Authorization: Bearer {{customer_token}}
+
+###

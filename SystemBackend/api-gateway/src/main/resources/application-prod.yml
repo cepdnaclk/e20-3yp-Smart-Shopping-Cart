@@ -1,0 +1,163 @@
+# ================================
+# 🌐 API Gateway - Production Config
+# ================================
+
+server:
+  port: 4020
+
+# ✅ Service URLs for routing
+customer:
+  service:
+    url: http://localhost:4000
+
+user:
+  service:
+    url: http://localhost:4003
+
+# ================================
+spring:
+  http:
+    codecs:
+      max-in-memory-size: 10MB
+
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "https://www.smartcartfree.site"
+              - "https://smartcartfree.site"
+              - "http://localhost:8080"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: false
+
+      routes:
+        # CUSTOMER SERVICE
+        - id: customer-service-auth-route
+          uri: http://localhost:4000
+          predicates:
+            - Path=/api/customer/auth/**
+          filters:
+            - StripPrefix=1
+
+        - id: customer-service-profile-route
+          uri: http://localhost:4000
+          predicates:
+            - Path=/api/customer/profile/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
+        # USER SERVICE
+        - id: user-service-auth-route
+          uri: http://localhost:4003
+          predicates:
+            - Path=/api/user/auth/login
+          filters:
+            - StripPrefix=1
+
+        - id: user-service-route
+          uri: http://localhost:4003
+          predicates:
+            - Path=/api/user/profile/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
+        # PRODUCT SERVICE
+        - id: product-service-auth-route
+          uri: http://localhost:4002
+          predicates:
+            - Path=/api/product/auth/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+            - name: RoleValidation
+              args:
+                allowedRoles: ADMIN,MANAGER,CASHIER
+
+        - id: product-service-all-route
+          uri: http://localhost:4002
+          predicates:
+            - Path=/api/product/all/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
+        - id: product-service-layout-auth-route
+          uri: http://localhost:4002
+          predicates:
+            - Path=/api/layout/auth/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+            - name: RoleValidation
+              args:
+                allowedRoles: ADMIN,MANAGER,CASHIER
+
+        # SHOPPING LIST SERVICE
+        - id: shopping-list-service-route
+          uri: http://localhost:4006
+          predicates:
+            - Path=/api/shopping-list/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+            - name: RoleValidation
+              args:
+                allowedRoles: CUSTOMER
+
+                # Cart Service (Auth ONLY)
+        - id: cart-service-auth-route
+          uri: http://localhost:4005
+          predicates:
+            - Path=/api/cart/auth/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+            - name: RoleValidation
+              args:
+                allowedRoles: ADMIN,MANAGER,CASHIER
+
+        # Cart Service (CUSTOMER NO AUTH NEEDED or optional)
+        - id: cart-service-customer-route
+          uri: http://localhost:4005
+          predicates:
+            - Path=/api/cart/customer/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+            - name: RoleValidation
+              args:
+                allowedRoles: CUSTOMER
+
+        # BILLING SERVICE
+        - id: billing-service-customer-route
+          uri: http://localhost:4004
+          predicates:
+            - Path=/api/bill/customer/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+            - name: RoleValidation
+              args:
+                allowedRoles: CUSTOMER
+
+        - id: billing-service-auth-route
+          uri: http://localhost:4004
+          predicates:
+            - Path=/api/bill/auth/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+            - name: RoleValidation
+              args:
+                allowedRoles: ADMIN,MANAGER,CASHIER

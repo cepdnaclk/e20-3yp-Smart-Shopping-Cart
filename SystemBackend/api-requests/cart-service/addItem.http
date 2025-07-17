@@ -1,0 +1,11 @@
+### POST Request to add an item to the cart
+POST http://localhost:4005/cart/addItem
+Content-Type: application/json
+
+{
+  "name": "Galaxy Chocolate Bar",
+  "quantity": 2,
+  "price": 4.99
+}
+
+###

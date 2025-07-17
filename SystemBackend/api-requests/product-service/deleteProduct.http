@@ -1,0 +1,5 @@
+### Delete request to Delete a Product
+DELETE http://localhost:4002/product/delete?barcode=1234567890123
+
+
+###

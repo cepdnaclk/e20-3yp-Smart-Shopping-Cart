@@ -1,0 +1,6 @@
+### GET user role using access token
+
+GET http://localhost:4020/api/user/profile/role
+Authorization: Bearer {{user_token}}
+
+###

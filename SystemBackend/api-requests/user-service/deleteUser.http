@@ -1,0 +1,6 @@
+### DELETE request to delete user
+
+DELETE http://localhost:4020/api/user/profile/delete?username=STA6255
+Authorization: Bearer {{ user_token }}
+
+###

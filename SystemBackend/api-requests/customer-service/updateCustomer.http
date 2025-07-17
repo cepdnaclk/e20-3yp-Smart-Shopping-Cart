@@ -1,0 +1,15 @@
+### PUT request to update customer profile
+
+PUT http://localhost:4020/api/customer/profile/update
+Content-Type: application/json
+Authorization: {{cusomer_token}}
+
+{
+  "firstName": "Minul",
+  "lastName": "Perera",
+  "email": "janidukips@gmail.com",
+  "nic": "200106901589",
+  "address": "456 New Lane, Colombo",
+  "phoneNumber": "0771234567",
+
+}

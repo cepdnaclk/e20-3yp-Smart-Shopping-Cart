@@ -1,0 +1,12 @@
+### POST request to Login a Customer
+POST http://localhost:4020/api/customer/auth/login
+Content-Type: application/json
+
+{
+  "username": "USER99769",
+
+  "password": "p87Ov!xh"
+}
+
+> {% client.global.set("customer_token", response.body.access_token) %}
+###
